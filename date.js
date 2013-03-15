@@ -232,6 +232,8 @@ var y = date.getFullYear();
 
 drawMonth(m, y);
 $("td").click(function(){alert("test");});
+$("#left").click(function(){monthDown()});
+$("#right").click(function(){monthUp()});
 window.onload = printHour();
  
 
