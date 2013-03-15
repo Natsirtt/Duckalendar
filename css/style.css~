@@ -1,0 +1,76 @@
+body {
+  color : silver;
+  background-color : black;
+}
+
+#calendar {
+  width : 45%;
+  margin : auto;
+  border-collapse : collapse;
+  font-weight : 900;
+  font-size : 1.5em;
+  position: absolute;
+  top: 5em;
+  left: 27.5%;
+}
+
+#calendar th {
+  padding-bottom : 10px;
+}
+
+#calendar td {
+  text-align : center;
+  color : silver;
+  background-color : black;
+  border : gray solid 2px;
+  width : 10%;
+  height : 75px;
+}
+
+#calendar .noWork {
+  background-color: #222222;
+}
+
+#calendar .noMonth {
+  color : #444444;
+}
+
+#date {
+  margin : auto;
+  text-align : center;
+  font-size : 1.5em;
+  font-weight : 900;
+}
+
+#month {
+  margin: auto;
+  text-align: center;
+  font-size : 1.3em;
+  font-weight : bold;
+  position: relative;
+  top: 1.4em;
+  width: 25%;
+}
+
+#right {
+  position: absolute;
+  right: 30%;
+  width: 2.5em;
+  height: 2.5em;
+  top: 6em;
+}
+
+#left {
+  position: absolute;
+  left: 30%;
+  width: 2.5em;
+  height: 2.5em;
+  top: 6em;
+}
+
+#theDuck {
+  position:absolute;
+  left: 0%;
+  top: 0%;
+  width: 20%;
+}
