@@ -124,6 +124,13 @@ function numericToStrMonth(m) {
   return monthes[m];
 }
 
+function isToday(j, m, y) {
+  date = new Date();
+  return date.getDate() == j
+      && date.getMonth() + 1 == m
+      && date.getFullYear() == y;      
+}
+
 function drawMonth(m, y) {
   $("#month").html(
     numericToStrMonth(m - 1)
@@ -152,37 +159,49 @@ function drawMonth(m, y) {
     if (j == 0) {
       calBody.append("<tr>");
     }
-    while (j < 7 && i < dayNb){
-      i++;
-      var bal = "<td>";
-      if (j >= 5) {
-        bal = "<td class=\"noWork\">"
+    while (i < dayNb) {
+      if (j == 0) {
+        calBody.append("<tr>");
       }
-      calBody.append(
-        bal
-        + i 
-        + "</td>"
-      );
-      j++;
-    }
-    var k = 0;
-    while (j < 7) {
-      k++;
-      var bal;
-      if (j > 4) {
-        bal = '<td class = "noWork noMonth">'
-      } else {
-        bal = '<td class = "noMonth">'
+      while (j < 7 && i < dayNb){
+        i++;
+        var bal = "<td>";
+        if (isToday(i, m, y)) {
+          bal = '<td class="today"';
+        } else {
+          bal = '<td';
+        }
+        if (j >= 5) {
+          bal += " class=\"noWork\">";
+        } else {
+          bal += '>';
+        }
+        calBody.append(
+          bal
+          + i 
+          + "</td>"
+        );
+        j++;
       }
-      calBody.append(
-        bal
-        + k 
-        +"</td>"
-      );
-      j++;
+      var k = 0;
+      while (j < 7) {
+        k++;
+        var bal;
+        if (j > 4) {
+          bal = '<td class = "noWork noMonth">'
+        } else {
+          bal = '<td class = "noMonth">'
+        }
+        calBody.append(
+          bal
+          + k 
+          +"</td>"
+        );
+        j++;
+      }
+      j = 0;
+      calBody.append("</tr>");
     }
-    j = 0;
-    calBody.append("</tr>");
   }
 }
 
@@ -231,9 +250,9 @@ var m = date.getMonth() + 1;
 var y = date.getFullYear();
 
 drawMonth(m, y);
-$("td").click(function(){alert("test");});
-$("#left").click(function(){monthDown()});
-$("#right").click(function(){monthUp()});
+$("td").click(function (){alert("test");});
+$("#left").click(function (){monthDown();});
+$("#right").click(function (){monthUp();});
 window.onload = printHour();
  
 

@@ -35,6 +35,11 @@ body {
   color : #444444;
 }
 
+#calendar .today {
+  background-color : #BBBBBB;
+  color : black;
+}
+
 #date {
   margin : auto;
   text-align : center;
