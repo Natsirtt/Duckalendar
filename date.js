@@ -215,7 +215,7 @@ function printHour() {
     + date.getFullYear()
     + "&nbsp;&nbsp;&nbsp;&nbsp;"
     + twoInt(date.getHours())
-    + " : "
+    + ":"
     + twoInt(date.getMinutes())
   );
   setTimeout('printHour();', '1000');

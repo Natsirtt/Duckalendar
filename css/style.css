@@ -57,25 +57,51 @@ body {
   width: 25%;
 }
 
-#right {
+.monthSwitchImg {
   position: absolute;
-  right: 30%;
   width: 2.5em;
   height: 2.5em;
   top: 6em;
 }
 
-#left {
-  position: absolute;
-  left: 30%;
-  width: 2.5em;
-  height: 2.5em;
-  top: 6em;
+#rightMonthSwitch {
+  right: 30%;
+}
+
+#leftMonthSwitch {
+	left: 30%;
 }
 
 #theDuck {
-  position:absolute;
+  position: absolute;
   left: 0%;
   top: 0%;
   width: 15%;
+}
+
+#editor {
+	position: absolute;
+	top: 19%;
+	right: 2.5em;
+	width: 300px;
+	height: 50%;
+	background-color: #FF0000;
+	overflow: auto;
+}
+
+#editorBar {
+	position: absolute;
+	top: 19%;
+	right: 0%;
+	border: solid #BBBBBB;
+	height: 50%;
+	width: 2em;
+}
+
+.barImg {
+	position: relative;
+	top: 45%;
+	left: 10%;
+	width: 1.5em;
+	height: 1.5em;
 }
