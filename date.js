@@ -1,10 +1,12 @@
-Number.prototype.isBi = function() {
-  if (!(Math.floor(this) == this)) {
+
+
+Number.prototype.isBi = function () {
+  if (Math.floor(this) != this) {
     throw "This n'est pas un entier";
   }
-  if (this.valueOf() % 400 == 0) {
+  if (this.valueOf() % 400 === 0) {
     return true;
-  } else if (this.valueOf() % 4 == 0 && this.valueOf() % 100 != 0){
+  } else if (this.valueOf() % 4 === 0 && this.valueOf() % 100 !== 0){
     return true;
   } else {
     return false;
@@ -26,13 +28,13 @@ function getJourMax(m,a) {
   }
   
   if (m <= 7) {
-    if (m % 2 == 0) {
+    if (m % 2 === 0) {
       return 30;
     } else {
       return 31;
     }
   } else {
-    if (m % 2 == 0) {
+    if (m % 2 === 0) {
       return 31;
     } else {
       return 30;
@@ -44,10 +46,11 @@ function twoInt(n) {
   if (isNaN(n)) {
     throw "n n'est pas un nombre entier";
   }
+  var string;
   if (n < 10) {
-    var string = "0";
+    string = "0";
   } else {
-    var string = "";
+    string = "";
   }
   string += n.toString();
   return string;
@@ -68,9 +71,9 @@ function isDate(s) {
   if (!reg.test(s)) {
     return false;
   } else {
-    var day = parseInt(s.substring(0, 2));
-    var month = parseInt(s.substring(3, 5));
-    var year = parseInt(s.substring(6, 11));
+    var day = parseInt(s.substring(0, 2), 10);
+    var month = parseInt(s.substring(3, 5), 10);
+    var year = parseInt(s.substring(6, 11), 10);
     return month.isInInter(1, 12) && day.isInInter(1, getJourMax(month, year));
   }
 }
@@ -131,6 +134,22 @@ function isToday(j, m, y) {
       && date.getFullYear() == y;      
 }
 
+function previousMonth(m, y) {
+  if (m == 1) {
+    return 12;
+  } else {
+    return m - 1;
+  }
+}
+
+function prevMonthYear(m , y) {
+  if (m == 1) {
+    return y - 1;
+  } else {
+    return y;
+  }
+}
+
 function drawMonth(m, y) {
   $("#month").html(
     numericToStrMonth(m - 1)
@@ -144,24 +163,30 @@ function drawMonth(m, y) {
   var j = 0;
   var calBody = $("#calendarBody");
   calBody.html("");
+  var content = "";
   if (fstJ > 1) {
-    calBody.append("<tr>");
+    content += "<tr>";
   }
+  var lstMonthDMax = getJourMax (
+    previousMonth(m, y),
+    prevMonthYear(m, y)
+  );
   while (j < fstJ - 1) {
     if (j > 4) {
-      calBody.append('<td class="noWork"></td>');
+      content += '<td class="noWork"></td>';
     } else {
-      calBody.append("<td></td>");
+      var num = lstMonthDMax - fstJ + j + 2;
+      content += "<td class = \"noMonth\">" + num + "</td>";
     }
     j++;
   }
   while (i < dayNb) {
-    if (j == 0) {
-      calBody.append("<tr>");
+    if (j === 0) {
+      content += "<tr>";
     }
     while (i < dayNb) {
-      if (j == 0) {
-        calBody.append("<tr>");
+      if (j === 0) {
+        content += "<tr>";
       }
       while (j < 7 && i < dayNb){
         i++;
@@ -176,11 +201,7 @@ function drawMonth(m, y) {
         } else {
           bal += '>';
         }
-        calBody.append(
-          bal
-          + i 
-          + "</td>"
-        );
+        content += bal + i + "</td>";
         j++;
       }
       var k = 0;
@@ -192,17 +213,15 @@ function drawMonth(m, y) {
         } else {
           bal = '<td class = "noMonth">'
         }
-        calBody.append(
-          bal
-          + k 
-          +"</td>"
-        );
+        content += bal + k +"</td>";
         j++;
       }
       j = 0;
-      calBody.append("</tr>");
+      content += "</tr>";
     }
   }
+  calBody.append(content);
+  $("td").click(function (){window.alert("test");});
 }
 
 function printHour() {
@@ -250,16 +269,6 @@ var m = date.getMonth() + 1;
 var y = date.getFullYear();
 
 drawMonth(m, y);
-$("td").click(function (){alert("test");});
 $("#left").click(function (){monthDown();});
 $("#right").click(function (){monthUp();});
 window.onload = printHour();
- 
-
-
-
-
-
-
-
-
