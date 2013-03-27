@@ -190,16 +190,16 @@ function drawMonth(m, y) {
       }
       while (j < 7 && i < dayNb){
         i++;
-        var bal = "<td>";
+        var bal;
         if (isToday(i, m, y)) {
-          bal = '<td class="today"';
+          bal = '<td class="today month';
         } else {
-          bal = '<td';
+          bal = '<td class="month';
         }
         if (j >= 5) {
-          bal += " class=\"noWork\">";
+          bal += " noWork\">";
         } else {
-          bal += '>';
+          bal += '">';
         }
         content += bal + i + "</td>";
         j++;
@@ -221,7 +221,32 @@ function drawMonth(m, y) {
     }
   }
   calBody.append(content);
-  $("td").click(function (){window.alert("test");});
+  $(".month").click(
+    function () {
+      $("#testBlock").animate({right:'0%'});
+      stretched = true;
+      selectedDay = $(this).text();
+      $("#testBlock").html(
+        selectedDay
+        + " "
+        + numericToStrMonth(m - 1)
+        + " "
+        + y
+      );
+    }
+  );
+  $("#testBlock").click(
+    function(){
+      if (stretched) {
+        $("#testBlock").animate({right: '-18%'});
+        $("#testBlock").html("");
+        stretched = false;
+      } else {
+        $("#testBlock").animate({right:'0%'});
+        stretched = true;
+      }
+    }
+  );
 }
 
 function printHour() {
@@ -265,8 +290,10 @@ function monthUp() {
 }
 
 var date = new Date();
+var selectedDay = date.getDate();
 var m = date.getMonth() + 1;
 var y = date.getFullYear();
+var stretched = false;
 
 drawMonth(m, y);
 $("#left").click(function (){monthDown();});
