@@ -97,3 +97,22 @@ body {
   right: -18%;
   padding-left: 5px;
 }
+
+#connect {
+  position: absolute;
+  right : 10px;
+  top : 10px;
+}
+
+.round {
+  border-radius: 7px;
+  background-color: rgb(30, 30, 30);
+  color: silver;
+  margin: 2px;
+  border: solid gray 1px;
+}
+
+.round:focus {
+  /*border: solid 1px rgb(0, 90, 0);*/
+  box-shadow: 0px 0px 8px rgb(0, 180, 0);
+}
