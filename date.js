@@ -176,7 +176,7 @@ function drawMonth(m, y) {
       content += '<td class="noWork"></td>';
     } else {
       var num = lstMonthDMax - fstJ + j + 2;
-      content += "<td class = \"noMonth\">" + num + "</td>";
+      content += '<td class = "noMonth monthDown">' + num + '</td>';
     }
     j++;
   }
@@ -197,7 +197,7 @@ function drawMonth(m, y) {
           bal = '<td class="month';
         }
         if (j >= 5) {
-          bal += " noWork\">";
+          bal += ' noWork">';
         } else {
           bal += '">';
         }
@@ -209,9 +209,9 @@ function drawMonth(m, y) {
         k++;
         var bal;
         if (j > 4) {
-          bal = '<td class = "noWork noMonth">'
+          bal = '<td class = "noWork noMonth monthUp">'
         } else {
-          bal = '<td class = "noMonth">'
+          bal = '<td class = "noMonth monthUp">'
         }
         content += bal + k +"</td>";
         j++;
@@ -221,6 +221,7 @@ function drawMonth(m, y) {
     }
   }
   calBody.append(content);
+  
   $(".month").click(
     function () {
       $("#testBlock").animate({right:'0%'});
@@ -233,8 +234,8 @@ function drawMonth(m, y) {
         + " "
         + y
       );
-    }
-  );
+    });
+      
   $("#testBlock").click(
     function(){
       if (stretched) {
@@ -245,8 +246,17 @@ function drawMonth(m, y) {
         $("#testBlock").animate({right:'0%'});
         stretched = true;
       }
-    }
-  );
+    });
+    
+  $(".monthUp").click(
+      function() {
+        monthUp();
+      });
+  
+  $(".monthDown").click(
+      function() {
+        monthDown();
+      });
 }
 
 function printHour() {
@@ -257,9 +267,9 @@ function printHour() {
     + numericToStrMonth(date.getMonth())
     + " "
     + date.getFullYear()
-    + "&nbsp;&nbsp;&nbsp;&nbsp;"
+    + "&nbsp;&nbsp;&nbsp;"
     + twoInt(date.getHours())
-    + " : "
+    + ":"
     + twoInt(date.getMinutes())
   );
   setTimeout('printHour();', '1000');
