@@ -82,6 +82,12 @@ body {
     width: 15%;
 }
 
+#notification {
+    position: absolute;
+    left: 18%;
+    top: 5%;
+}
+
 #testBlock {
     background-color: black;
     color : silver;
@@ -108,7 +114,7 @@ body {
 #inscription {
     position: absolute;
     left: 20%;
-    top: 10%;
+    top: 30%;
 }
 
 .round {

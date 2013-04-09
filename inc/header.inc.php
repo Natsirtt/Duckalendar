@@ -6,10 +6,16 @@
     <head>
         <title>Duckalendar - <?php if (isset($title)) { echo $title; } ?></title>
         <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="/Duckalendar/css/style.css" />
 
         <script src="jquery-1.9.1.min.js" type="text/javascript"></script>
     </head>
     <body>
-        <p><img src="images/theDuck.png" alt="theDuck" id="theDuck" /></p>
-        
+        <p><a href="/Duckalendar/"><img src="/Duckalendar/images/theDuck.png" alt="theDuck" id="theDuck" /></a></p>
+        <div id="notification">
+            <?php 
+            if (isset($notification)) {
+                echo '<p id="notificationMsg">'.$notification.'. Coin.</p>';
+            }
+            ?>
+        </div>

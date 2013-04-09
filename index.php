@@ -1,5 +1,12 @@
 <?php
 $title = "Calendrier";
+if (isset($_GET['status'])) {
+    if (($_GET['status'] == "deco")) {
+        $notification = "Vous êtes maintenant déconnecté";
+    } else if (($_GET['status'] == "conErr")) {
+        $notification = "La connexion a échouée";
+    }
+}
 include_once 'inc/header.inc.php';
 ?>
 <script src="inputs.js" type="text/javascript"></script>

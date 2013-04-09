@@ -1,4 +1,4 @@
-var defaultInput = ["login", "password"];
+var defaultInput = ["login", "password", "rePassword"];
 
 $(document).ready(
   function() {
