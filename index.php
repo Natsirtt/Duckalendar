@@ -1,25 +1,29 @@
 <?php
 $title = "Calendrier";
 if (isset($_GET['status'])) {
-    if (($_GET['status'] == "deco")) {
+    if ($_GET['status'] == "deco") {
         $notification = "Vous êtes maintenant déconnecté";
-    } else if (($_GET['status'] == "conErr")) {
+    } else if ($_GET['status'] == "connected") {
+        $notification = "Bonjour ".$_COOKIE['connection'];
+    } else if ($_GET['status'] == "conErr") {
         $notification = "La connexion a échouée";
+    } else if ($_GET['status'] == "noUserOrPassErr") {
+        $notification = "Utilisateur inconnu ou mot de passe incorrect";
     }
 }
-include_once 'inc/header.inc.php';
+require_once 'inc/header.inc.php';
 ?>
 <script src="inputs.js" type="text/javascript"></script>
 
 <div id="connect">
-    <form action="connection.php" method="post">
-        <?php if (!isset($_COOKIE['connection'])) { ?>
+    <?php if (!isset($_COOKIE['connection'])) { ?>
+        <form action="connection.php" method="post">
             <input type="text" name="login" value="login" class="round" /><br />
-            <input type="password" value="password" name="pass" class="round" /><br />
+            <input type="password" value="password" name="password" class="round" /><br />
             <input type="submit" value="Connexion" />
-                <a href="inscription.php">inscription</a>
-        <?php } else { ?>
-            <p>Bonjour, <?php echo $_COOKIE['connection']; ?></p>
+                <a href="inscription.php">Inscription</a>
+    <?php } else { ?>
+        <form action="deconnection.php" method="post">
             <input type="submit" value="Déconnexion" />
         <?php } ?>
     </form>
