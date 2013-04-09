@@ -10,6 +10,7 @@ include_once 'inc/header.inc.php';
             <input type="text" name="login" value="login" class="round" /><br />
             <input type="password" value="password" name="pass" class="round" /><br />
             <input type="submit" value="Connexion" />
+                <a href="inscription.php">inscription</a>
         <?php } else { ?>
             <p>Bonjour, <?php echo $_COOKIE['connection']; ?></p>
             <input type="submit" value="Déconnexion" />
@@ -35,6 +36,9 @@ include_once 'inc/header.inc.php';
     </tbody>
 </table>
 <div id = "testBlock">
+    <div></div>
+    <img src="/Duckalendar/images/plus.png" alt="plus" id="plus" />
+    <img src="/Duckalendar/images/moins.png" alt="moins" id="moins" />
 </div>
 
 <script src="date.js" type="text/javascript"></script>

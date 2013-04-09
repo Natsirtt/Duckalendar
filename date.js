@@ -227,12 +227,13 @@ function drawMonth(m, y) {
       $("#testBlock").animate({right:'0%'});
       stretched = true;
       selectedDay = $(this).text();
-      $("#testBlock").html(
+      $("#testBlock div").html(
         selectedDay
         + " "
         + numericToStrMonth(m - 1)
         + " "
         + y
+        + "<hr />"
       );
     });
       
@@ -240,7 +241,7 @@ function drawMonth(m, y) {
     function(){
       if (stretched) {
         $("#testBlock").animate({right: '-18%'});
-        $("#testBlock").html("");
+        $("#testBlock div").html("");
         stretched = false;
       } else {
         $("#testBlock").animate({right:'0%'});
