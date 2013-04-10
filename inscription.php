@@ -57,10 +57,45 @@ include_once 'inc/header.inc.php';
 <div id="inscription">
     <form action="" method="post">
         <input type="text" name="login" value="login" class="round" /><br />
-        <input type="password" name="password" value="password" class="round" /><br />
+        <input type="password" name="password" value="password" class="round" id="passwordInput"/><br />
         <input type="password" name="rePassword" value ="password" class="round" /><br />
-        <input type="submit" value="Inscription" />
+        <input type="submit" value="Inscription" id="submitButton" />
     </form>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(
+        function() {
+            $("#passwordInput").change(function () {
+                var val = $(this).val();
+                $.ajax({
+                    url: 'inscriptionCheckLogin.ajax.php',
+                    type: 'POST',
+                    data: {
+                        login: val
+                    },
+                    error: function(j, textStatus, errorThrown) {
+                        var notif = $("#notificationMsg");
+                        notif.empty();
+                        notif.append("Erreur lors de la requête asynchrone");
+                    },
+                    success: function(data, textStatus, j) {
+                        if (data == "exists") {
+                            var notif = $("#notificationMsg");
+                            notif.empty();
+                            notif.append("Ce login est déjà utilisé");
+                            $("#submitButton").attr("disabled", "disabled");
+                        } else if (data == "doesntExist") {
+                            $("#submitButton").removeAttr("disabled");
+                        } else {
+                            var notif = $("#notificationMsg");
+                            notif.empty();
+                            notif.append("Erreur côté serveur lors de la requête asynchrone");
+                        }
+                    }
+                });
+            });
+        });
+</script>
 
 <?php include_once 'inc/footer.inc.php'; ?>
