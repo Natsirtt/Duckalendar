@@ -56,8 +56,9 @@ include_once 'inc/header.inc.php';
 
 <div id="inscription">
     <form action="" method="post">
-        <input type="text" name="login" value="login" class="round" /><br />
-        <input type="password" name="password" value="password" class="round" id="passwordInput"/><br />
+        <input type="text" name="login" value="login" class="round" id="loginInput" /><br />
+        <p id="loginNotif"></p>
+        <input type="password" name="password" value="password" class="round" /><br />
         <input type="password" name="rePassword" value ="password" class="round" /><br />
         <input type="submit" value="Inscription" id="submitButton" />
     </form>
@@ -66,8 +67,9 @@ include_once 'inc/header.inc.php';
 <script type="text/javascript">
     $(document).ready(
         function() {
-            $("#passwordInput").change(function () {
+            $("#loginInput").change(function () {
                 var val = $(this).val();
+                $("#loginNotif").text("test");
                 $.ajax({
                     url: 'inscriptionCheckLogin.ajax.php',
                     type: 'POST',
@@ -75,22 +77,19 @@ include_once 'inc/header.inc.php';
                         login: val
                     },
                     error: function(j, textStatus, errorThrown) {
-                        var notif = $("#notificationMsg");
-                        notif.empty();
-                        notif.append("Erreur lors de la requête asynchrone");
+                        var notif = $("#login");
+                        notif.text("Erreur lors de la requête asynchrone");
                     },
-                    success: function(data, textStatus, j) {
+                    success: function(data) {
+                        var loginNotif = $("#loginNotif");
                         if (data == "exists") {
-                            var notif = $("#notificationMsg");
-                            notif.empty();
-                            notif.append("Ce login est déjà utilisé");
+                            loginNotif.text("Login déjà utilisé");
                             $("#submitButton").attr("disabled", "disabled");
                         } else if (data == "doesntExist") {
+                            loginNotif.text("Login disponible");
                             $("#submitButton").removeAttr("disabled");
                         } else {
-                            var notif = $("#notificationMsg");
-                            notif.empty();
-                            notif.append("Erreur côté serveur lors de la requête asynchrone");
+                            loginNotif.text("Erreur côté serveur lors de la requête asynchrone");
                         }
                     }
                 });
