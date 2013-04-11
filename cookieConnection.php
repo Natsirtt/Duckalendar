@@ -9,12 +9,10 @@ if (isset($_COOKIE['connection'])) {
         
         if ($res = $resreq->fetch()) {
             if ($_SERVER['REMOTE_ADDR'] != $res['ip']) {
-                $notification = "Votre adresse ip ayant changé, vous avez été déconnecté par mesure de sécurité";
-                header('Location: deconnection.php?src=ip');
+                header('Location: deconnection.php?src=ipdeco');
             }
         } else {
-            $notification = "Erreur lors de la récupération de vôtre ancienne ip. Déconnexion forcée";
-            header('Location: deconnection.php');
+            header('Location: deconnection?src=iperr.php');
         }
     }
 }

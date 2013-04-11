@@ -21,9 +21,8 @@ class Event {
             $this->_beginDate = "";
             $this->_name = "";
         } else {
-            $req = 'SELECT * from events WHERE login="'.$this->_owner." AND date="
+//            $req = 'SELECT * from events WHERE login="'.$this->_owner." AND date="
         }
-        
     }
 }
 

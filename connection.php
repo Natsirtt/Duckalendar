@@ -22,13 +22,13 @@ if (isset($_POST['login']) && isset($_POST['password'])) {
                 if ($status) {
                     header("Location: index.php?status=connected");
                 } else {
-                    header("Location: index.php?status=conErr");
+                    header("Location: index.php?status=conErr&login=$login");
                 }
             } else {
-                header("Location: index.php?status=noUserOrPassErr");
+                header("Location: index.php?status=noUserOrPassErr&login=$login");
             }
         } else {
-            header("Location: index.php?status=noUserOrPassErr");
+            header("Location: index.php?status=noUserOrPassErr&login=$login");
         }
     }
 } else if (isset($_POST['login']) || isset($_POST['password'])) {
