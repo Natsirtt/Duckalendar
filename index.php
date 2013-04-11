@@ -1,4 +1,7 @@
 <?php
+
+require_once 'cookieConnection.php';
+
 $title = "Calendrier";
 if (isset($_GET['status'])) {
     if ($_GET['status'] == "deco") {
@@ -9,6 +12,8 @@ if (isset($_GET['status'])) {
         $notification = "La connexion a échouée";
     } else if ($_GET['status'] == "noUserOrPassErr") {
         $notification = "Utilisateur inconnu ou mot de passe incorrect";
+    } else if ($_GET['status'] == "alreadyCon") {
+        $notification = "Veuillez vous déconnecter avant d'ouvrir un autre compte";
     }
 }
 require_once 'inc/header.inc.php';
@@ -27,6 +32,7 @@ require_once 'inc/header.inc.php';
             <input type="submit" value="Déconnexion" />
         <?php } ?>
     </form>
+                
 </div>
 
 <p id="date"></p>
@@ -52,7 +58,7 @@ require_once 'inc/header.inc.php';
     <img src="/Duckalendar/images/moins.png" alt="moins" id="moins" />
 </div>
 
-<script src="date.js" type="text/javascript"></script>
+<script src="calendar.js" type="text/javascript"></script>
 
 <?php include_once 'inc/footer.inc.php'; ?>
 
