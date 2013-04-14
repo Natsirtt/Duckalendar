@@ -145,16 +145,18 @@ a {
   position: absolute;
   bottom: 0px;
   left: 0px;
-  width: 12%;
-  border: 1px solid gray;
+  /*width: 12%;*/
+  width: 8%;
+  /*border: 1px solid gray;*/
   padding: 2px;
 }
 #moins {
   position: absolute;
   bottom: 0px;
   right: 0px;
-  width: 12%;
-  border: 1px solid gray;
+  /*width: 12%;*/
+  width: 8%;
+  /*border: 1px solid gray;*/
   padding: 2px;
 }
 

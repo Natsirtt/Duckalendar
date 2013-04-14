@@ -64,7 +64,7 @@ require_once 'inc/header.inc.php';
 <div id = "testBlock">
     <div></div>
     <img src="/Duckalendar/images/plus.png" alt="plus" id="plus" />
-    <img src="/Duckalendar/images/moins.png" alt="moins" id="moins" />
+    <!--<img src="/Duckalendar/images/moins.png" alt="moins" id="moins" />-->
 </div>
 
 <script src="calendar.js" type="text/javascript"></script>
