@@ -1,13 +1,18 @@
 <?php
 
-require_once 'bddconnection.php';
+require_once 'BddConnection.class.php';
 
-if (isset($_POST['login'])) {
+try {
+    $bddconnection = new BddConnection(BddConnection::$mysql, "localhost", "duckalendar", "root", "motdepasse");
+} catch (BddConnectionFailedException $e) {
+    echo 'bddError';
+}
 
-    $req = 'SELECT * FROM users WHERE login="' . $_POST['login'] . '"';
-    $res = $bdd_connection->query($req);
+if ($bddconnection->isConnected() && isset($_POST['login'])) {
 
-    if ($res->fetch()) {
+    $reqres = $bddconnection->query('SELECT * FROM users WHERE login="' . $_POST['login'] . '"');
+    $res = $reqres->fetch();
+    if ($res) {
         echo 'exists';
     } else {
         echo 'doesntExist';

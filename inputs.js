@@ -8,7 +8,5 @@ $(document).ready(
         if (defaultInput.indexOf(input.val()) !== -1) {
           input.val("");
         }
-      }
-    )
-  }
-);
+      });
+  });

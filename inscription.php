@@ -18,18 +18,22 @@ function randomStr($len) {
 
 $title = "Inscription";
 
-include_once 'bddconnection.php';
+require_once 'BddConnection.class.php';
+try {
+    $bddconnection = new BddConnection(BddConnection::$mysql, "localhost", "duckalendar", "root", "motdepasse");
+} catch (BddConnectionFailedException $e) {
+    $notification = "Erreur de connexion à la base de données";
+}
 
-if ($bdd_connected) {
+if ($bddconnection->isConnected()) {
 
     if (isset($_POST['login']) && isset($_POST['password']) && isset($_POST['rePassword'])) {
         if ($_POST['login'] == "") {
             $notification = "Veuillez entrer un login";
         } else {
-            $req = 'SELECT * FROM users WHERE login="' . $_POST['login'] . '"';
-            $res = $bdd_connection->query($req);
-
-            if ($res->fetch()) {
+            $reqres = $bddconnection->query('SELECT * FROM users WHERE login="' . $_POST['login'] . '"');
+            $res = $reqres->fetch();
+            if ($res) {
                 $notification = "Ce login est déjà utilisé";
             } else {
                 if (strcmp($_POST['password'], $_POST['rePassword']) == 0) {
@@ -37,9 +41,9 @@ if ($bdd_connected) {
                     $cryptedPassword = crypt($_POST['password'], $salt);
 
                     $sql = "INSERT INTO users (login, password, salt, ip) VALUES (?, ?, ?, ?)";
-                    $reqprep = $bdd_connection->prepare($sql);
+                    $values = array($_POST['login'], $cryptedPassword, $salt, $_SERVER['REMOTE_ADDR']);
+                    $status = $bddconnection->preparedQuery($sql, $values);
 
-                    $status = $reqprep->execute(array($_POST['login'], $cryptedPassword, $salt, $_SERVER['REMOTE_ADDR']));
                     if ($status) {
                         $notification = "Vous êtes maintenant inscrit";
                     } else {
@@ -72,6 +76,7 @@ include_once 'inc/header.inc.php';
 </div>
 
 <script type="text/javascript">
+    //Gestion de l'AJAX
     function disableSubmit() {
         $("#submitButton").attr("disabled", "disabled");
         $("#loginInput").attr("class", "round redBorder");
@@ -110,6 +115,8 @@ include_once 'inc/header.inc.php';
                                 } else if (data == "doesntExist") {
                                     loginNotif.text("Login disponible");
                                     enableSublmit();
+                                } else if (data == "bddError") {
+                                    loginNotif.text("Erreur lors de la connexion à la base de données");
                                 } else {
                                     loginNotif.text("Erreur côté serveur lors de la requête asynchrone");
                                 }

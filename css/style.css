@@ -3,6 +3,7 @@ body {
     background-color : black;
     width : 100%;
     overflow-x: hidden;
+    cursor: default;
 }
 
 #calendar {
@@ -35,11 +36,28 @@ body {
 
 #calendar .noMonth {
     color : #444444;
+    cursor: pointer;
+}
+
+#calendar .noMonth:hover {
+    color: #BBBBBB;
+}
+
+#calendar .month {
+    cursor: pointer;
+}
+
+#calendar .month:hover {
+    background-color: #444444;
 }
 
 #calendar .today {
     background-color : #BBBBBB;
     color : black;
+}
+
+#calendar .hasEvent {
+    background-color: rosybrown;
 }
 
 #date {
@@ -88,23 +106,6 @@ body {
     top: 5%;
 }
 
-#testBlock {
-    background-color: black;
-    color : silver;
-    border-top : solid 2px gray;
-    border-left : solid 2px gray;
-    border-bottom : solid 2px gray;
-    font-size: 1.5em;
-    font-weight: 900;
-    width: 20%;
-    height: 50%;
-    position: absolute;
-    top : 25%;
-    right: -18%;
-    padding-left: 5px;
-    border-collapse: collapse;
-}
-
 #connect {
     position: absolute;
     right: 10px;
@@ -141,24 +142,101 @@ a {
   color : gray;
 }
 
+#decoButton {
+    cursor: pointer;
+}
+
+#rightPanel {
+    background-color: black;
+    color : silver;
+    border-top : solid 2px gray;
+    border-left : solid 2px gray;
+    border-bottom : solid 2px gray;
+    width: 20%;
+    height: 450px;
+    position: absolute;
+    top : 150px;
+    right: -22%;
+    padding-left: 5px;
+    border-collapse: collapse;
+    display: none;
+}
+
+#topRightPanel {
+    font-size: 1.5em;
+    font-weight: 900;
+}
+
+#innerRightPanel {
+    border-top: gray solid 2px;
+    height: 83%;
+    overflow-y: auto;
+}
+
+#bottomRightPanel {
+    border-top: gray solid 2px;
+    height: 30px;
+}
+
+.eventDesc {
+    /*position: relative;*/
+    /*left: 5px;*/
+}
+
+#innerRightPanel dt {
+    font-weight: bold;
+    /*text-decoration: underline;*/
+    cursor: pointer;
+}
+
+#innerRightPanel dt:hover {
+    color: #999999;
+}
+
 #plus {
   position: absolute;
-  bottom: 0px;
+  bottom: 4px;
   left: 0px;
   /*width: 12%;*/
-  width: 8%;
+  width: 25px;
   /*border: 1px solid gray;*/
-  padding: 2px;
+  padding: 5px;
+  cursor: pointer;
 }
+
+#panelArrow {
+    position: absolute;
+    bottom: 4px;
+    right: 0px;
+    width: 25px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+#newEventSubmit {
+    display: none;
+    cursor: pointer;
+    position: absolute;
+    bottom: 10px;
+    left: 40px;
+}
+
+#newEventStatus {
+    position: absolute;
+    bottom: 15px;
+    left: 130px;
+    display: none;
+}
+
+/*
 #moins {
   position: absolute;
   bottom: 0px;
   right: 0px;
-  /*width: 12%;*/
   width: 8%;
-  /*border: 1px solid gray;*/
   padding: 2px;
 }
+*/
 
 #loadingImg {
     visibility: hidden;
