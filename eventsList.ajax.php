@@ -34,7 +34,11 @@ if (!isset($_COOKIE['connection'])) {
             //renvoyer ! (a l'exception des deux valeurs de temps dont
             //il faut retirer les secondes, inutilisées par duckalendar
             
-            $reqres = $bddconnection->query("SELECT * from events WHERE `date`='" . $_POST['date'] . "' AND login='" . $_COOKIE['connection'] . "'");
+            $reqres = $bddconnection->query("SELECT * from events WHERE `date`='"
+                                                .$_POST['date']
+                                            ."' AND login='"
+                                                .$_COOKIE['connection']
+                                            ."' ORDER BY beginTime ASC");
 
             $eventsArray = array();
             $eventsNb = 0;
@@ -42,7 +46,7 @@ if (!isset($_COOKIE['connection'])) {
                 $beginTimeExploded = explode(":", $event['beginTime']);
                 $event['beginTime'] = $beginTimeExploded[0].":".$beginTimeExploded[1];
                 $endTimeExploded = explode(":", $event['endTime']);
-            $event['endTime'] = $endTimeExploded[0].":".$endTimeExploded[1];
+                $event['endTime'] = $endTimeExploded[0].":".$endTimeExploded[1];
                 $eventsNb = array_push($eventsArray, $event);
             }
 

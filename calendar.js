@@ -1,5 +1,21 @@
-//Fonctions pour les cookies
+//Des variables utiles
+var date = new Date();
+var selectedDate = new Date();
+var m = date.getMonth() + 1;
+var y = date.getFullYear();
+var stretched = false;
+var addEventFormDisplayed = false;
+//Le booléen indiquant si tel jour à un évènement ou non
+var dayHasEvent = new Array();
+//Le tableau du nom des évènements affichés dans le panel
+var displayedEvents = new Array();
+var displayedEventsNb = 0;
+//Pour le clic sur les listes d'événements
+var imgClicked = false;
+//La taille d'un input de titre d'événement
+var eventNameInputLength = 25;
 
+//Fonctions pour les cookies
 function getCookie(cookieName) {
     var cookContent = document.cookie;
     var cookieName2 = cookieName + "=";
@@ -39,7 +55,7 @@ function newDate(j, m, y) {
  */
 function newDateFromStr(str) {
     var splitedStr = str.split("-");
-    return newDate(parseInt(splitedStr[0]), parseInt(splitedStr[1]), parseInt(splitedStr[2]));
+    return newDate(parseInt(splitedStr[2]), parseInt(splitedStr[1]), parseInt(splitedStr[0]));
 }
 
 /**
@@ -68,8 +84,7 @@ function hoursAndMinutesCompare(date2) {
     var thisHours = this.getHours();
     var date2Hours = date2.getHours();
     var thisMinutes = this.getMinutes();
-    var date2Minutes = date2.getMinutes;
-
+    var date2Minutes = date2.getMinutes();
     if ((thisHours < date2Hours)
             || ((thisHours == date2Hours) && (thisMinutes < date2Minutes))) {
         return -1;
@@ -130,6 +145,11 @@ function YMDDateFormat() {
 
 Date.prototype.YMDFormat = YMDDateFormat;
 
+function DMY_to_YMD(str) {
+    var splitedStr = str.split("-");
+    return splitedStr[2] + "-" + splitedStr[1] + "-" + splitedStr[0];
+}
+
 //Le calendrier
 
 /**
@@ -142,19 +162,251 @@ function setNotification(msg) {
 }
 
 /**
- * Affiche dans le container tout un évènement, permettant de le modifier
- * et de le supprimer.
+ * Fonction asynchrone de modification d'un évènement en fonction des
+ * formulaires de modification possiblement affichés.
  */
-function displayOneEvent(container, eventName, date) {
+function modifEvent() {
+    //On empêche de mettre une date de fin antérieure à la date de début
+    var endDateValue = $("#panelEndDate").val();
+    var endTimeValue = $("#panelEndTime").val();
+    var beginTimeValue = $("#panelBeginTime").val();
+    var ok = true;
+    if (endDateValue == "") {
+        endDateValue = DMY_to_YMD($("#panelEndDate").html());
+    }
+    var endDate = newDateFromStr(endDateValue);
+    if (selectedDate.compare(endDate) == 1) {
+            setNotification("Veuilez entrer une date de fin posterieure ou identique à celle de début");
+            ok = false;
+    }
+    if (beginTimeValue == "") {
+        beginTimeValue = $("#panelBeginTime").html();
+    }
+    if (endTimeValue == "") {
+        endTimeValue = $("#panelEndTime").html();
+    }
+    var endTimeDate = newDateTimeFromStr(endTimeValue + ":00");
+    var beginTimeDate = newDateTimeFromStr(beginTimeValue + ":00");
+    if ((selectedDate.compare(endDate) == 0)
+            && (beginTimeDate.compareHoursAndMinutes(endTimeDate) != -1)) {
+        //Si la date de début et de fin et la même, l'heure de fin doit être
+        //strictement supérieure à celle de début
+        setNotification("Veuillez entrer une horaire de fin posterieure à celle de début");
+        ok = false;
+    }
     
+    if (ok) {
+        var newName = $("#panelEventName").val();
+        var originalName = $("#panelOriginalName").val();
+        $.ajax({
+            url: 'eventManager.ajax.php',
+            type: 'POST',
+            data: {
+                req: "modif",
+                eventName: newName,
+                oriEventName: originalName,
+                oriBeginDate: selectedDate.YMDFormat(),
+                beginTime: $("#panelBeginTime").val(),
+                endTime: $("#panelEndTime").val(),
+                endDate: endDateValue,
+                desc: $("#panelDesc").val()
+            },
+            error: function(j, textStatus, errorThrown) {
+                setNotification("Erreur lors de la modification asynchrone d'un événement");
+            },
+            success: function(data) {
+                var result = JSON.parse(data);
+                if (result.status == "inputsError") {
+                    setNotification("Erreur dans les données envoyées au serveur");
+                } else if (result.status == "unidentified") {
+                    setNotification("Veuillez vous identifier afin de pouvoir utiliser Duckalendar");
+                } else if (result.status == "bddConnectionFailed") {
+                    setNotification("Erreur de connexion à la base de données");
+                } else if (result.status == "modifFailed") {
+                    setNotification("La modification de l'événement en base de données à échoué");
+                } else if (result.status == "noSuchEvent") {
+                    setNotification("Evénement introuvable en base de données");
+                } else if (result.status == "ok") {
+                    //OK
+                    if (newName == "") {
+                        newName = originalName;
+                    }
+                    displayOneEvent($("#innerRightPanel"), newName, selectedDate);
+                } else {
+                    setNotification("Réponse du serveur inconnue");
+                }
+            }
+        });
+    }
 }
 
 /**
- * Affiche un formulaire de modification d'évènement dans le container.
+ * Affiche dans le container tout un événement, permettant de le modifier
+ * et de le supprimer.
  */
-function displayModifForm(container, eventName, date) {
-    alert()
-    container.html("");
+function displayOneEvent(container, eventName, date) {
+    $("#newEventSubmit").css({display :'none'});
+    //Requête ajax afin de récupérer les informations 
+    //de l'événement
+    $.ajax({
+        url: 'eventManager.ajax.php',
+        type: 'POST',
+        data: {
+            req: 'infos',
+            eventName: eventName,
+            beginDate: selectedDate.YMDFormat()
+        },
+        error: function(j, textStatus, errorThrown) {
+            setNotification("Erreur lors de la requête asynchrone");
+        },
+        success: function(data) {
+            var result = JSON.parse(data);
+            if (result.status == "inputsError") {
+                setNotification("Erreur de données envoyées au serveur");
+            } else if (result.status == "unknownReq") {
+                setNotification("Type de requête inconnu par le serveur");
+            } else if (result.status == "unidentified") {
+                setNotification("Vous devez être identifier afin de pouvoir utiliser Duckalendar");
+            } else if (result.status == "bddConnectionFailed") {
+                setNotification("Erreur de connexion à la base de données");
+            } else if (result.status == "NoSuchEvent") {
+                setNotification("Evénement introuvable en base de données");
+            } else if (result.status == "ok") {
+                //OK
+                $("#undo").css({display: "block"});
+                //Action de l'annulation
+                $("#undo").click(function() {
+                    displayListEvents(container, date);
+                });
+
+                //Le panel
+                var panel = $("#innerRightPanel");
+                panel.html("");
+                panel.append('<form action="" method="post">')
+                panel.append('<h3 id="panelEventName" class="modifText">' + eventName + '</h3>');
+                panel.append('<input type="hidden" id="panelOriginalName" value="' + eventName + '" />');
+                panel.append('<h4>Début : </h4>');
+                panel.append('<p id="panelBeginTime" class="modifTime">' + result.beginTime + '</p>');
+                panel.append('<h4>Fin : </h4>');
+                panel.append('<p><span id="panelEndTime" class="modifTime">' + result.endTime + '</span> le <span id="panelEndDate" class="modifDate">' + result.endDateDMY + '</span></p>');
+                panel.append('<h4>Description :</h4>');
+                if (result.desc == "") {
+                    panel.append('<div id="panelDesc" class="modifArea"><p>Aucune description.</p></div>');
+                } else {
+                    panel.append('<div id="panelDesc" class="modifArea"><p>' + result.desc + '</p></div>');
+                }
+                panel.append('</form>');
+
+                //formulaires de modification seulement si l'évènement
+                //n'est pas passé
+                var endTimeDate = newDateTimeFromStr(result.endTime);
+                var nowDate = new Date();
+                var endDate = newDateFromStr(result.endDateYMD);
+                if ((selectedDate.compare(nowDate) != -1) || ((endDate.compare(nowDate) == 0) && (endTimeDate.compareHoursAndMinutes(nowDate) == 1)) || (endDate.compare(nowDate) == 1)) {
+                    $(".modifText").click(function() {
+                        var value = $(this).html();
+                        var id = $(this).attr("id");
+                        //On enlève le handler de clic
+                        $("#" + id).unbind('click');
+                        $(this).removeAttr("id");
+                        $(this).html('<input type="text" id="' + id + '" value="' + value + '" maxlength="' + eventNameInputLength + '" size="' + (eventNameInputLength + 1) + '" />');
+                        $("#newEventSubmit").attr("value", "Modifier");
+                        $("#newEventSubmit").css({display: "block"});
+                        $("#addEventForm").unbind('submit');
+                        $("#addEventForm").submit(function() {
+                            modifEvent();
+                            return false;
+                        });
+                    });
+
+                    $(".modifTime").click(function() {
+                        var value = $(this).html();
+                        var id = $(this).attr("id");
+                        //On enlève le handler de clic
+                        $("#" + id).unbind('click');
+                        $(this).removeAttr("id");
+                        $(this).html('<input type="time" id="' + id + '" value="' + value + '" />');
+                        $("#newEventSubmit").attr("value", "Modifier");
+                        $("#newEventSubmit").css({display: "block"});
+                        $("#addEventForm").unbind('submit');
+                        $("#addEventForm").submit(function() {
+                            modifEvent();
+                            return false;
+                        });
+                    });
+
+                    $(".modifDate").click(function() {
+                        var value = $(this).html();
+                        var id = $(this).attr("id");
+                        //On enlève le handler de clic
+                        $("#" + id).unbind('click');
+                        $(this).removeAttr("id");
+                        $(this).html('<input type="date" id="' + id + '" value="' + DMY_to_YMD(value) + '" />');
+                        $("#newEventSubmit").attr("value", "Modifier");
+                        $("#newEventSubmit").css({display: "block"});
+                        $("#addEventForm").unbind('submit');
+                        $("#addEventForm").submit(function() {
+                            modifEvent();
+                            return false;
+                        });
+                    });
+
+                    $(".modifArea").click(function() {
+                        var value = $(this).children().html();
+                        if (value == "Aucune description.") {
+                            value = "";
+                        }
+                        var id = $(this).attr("id");
+                        //On enlève le handler de clic
+                        $("#" + id).unbind('click');
+                        $(this).removeAttr("id");
+                        $(this).html('<textarea rows="15" cols="30" id="' + id + '">' + value + '</textarea>');
+                        $("#newEventSubmit").attr("value", "Modifier");
+                        $("#newEventSubmit").css({display: "block"});
+                        $("#addEventForm").unbind('submit');
+                        $("#addEventForm").submit(function() {
+                            modifEvent();
+                            return false;
+                        });
+                    });
+                }
+
+
+            } else {
+                setNotification("Réponse du serveur inconnue");
+            }
+        }
+    });
+}
+
+function deleteEventIntoDatabase(eventName, date) {
+    $.ajax({
+        url: 'eventManager.ajax.php',
+        type: 'POST',
+        data: {
+            req: 'del',
+            eventName: eventName,
+            beginDate: date.YMDFormat()
+        },
+        error: function(j, textStatus, errorThrown) {
+            setNotification("Erreur lors de la requête asynchrone")
+        },
+        success: function(data) {
+            var result = JSON.parse(data);
+            if (result.status == "inputsError") {
+                setNotification("Erreur de données entrées au serveur");
+            } else if (result.status == "noSuchEvent") {
+                setNotification("Evénement à supprimer introuvable en base de données");
+            } else if (result.status == "delFailed") {
+                setNotification("La suppression de l'évènement a rencontré un problème");
+            } else if (result.status == "ok") {
+//                setNotification("L'évènement à bien été supprimé");
+            } else {
+                setNotification("Etat du serveur inconnu");
+            }
+            displayListEvents($("#innerRightPanel"), date);
+        }
+    });
 }
 
 /**
@@ -165,20 +417,27 @@ function displayAddEventForm(container) {
     var dateStr = selectedDate.YMDFormat();
     container.html(
             '<form action="" method="post">'
-            + '<p>Nom de l\'évènement :</p>'
-            + '<input type="text" id="eventNameInput" maxlength="25" size="26" />'
+            + '<p>Nom de l\'événement :</p>'
+            + '<input type="text" id="eventNameInput" maxlength="' + eventNameInputLength + '" size="' + (eventNameInputLength + 1) + '" />'
             + '<p>Date de fin :</p>'
             + '<input type="date" min="' + dateStr + '" value="' + dateStr + '" id="endDateInput" />'
             + '<p>Heure de début :</p>'
             + '<input type="time" value="08:00" id="beginTimeInput" />'
             + '<p>Heure de fin :</p>'
             + '<input type="time" value="09:00" id="endTimeInput" />'
-            + '<p>Description de l\'évènement :</p>'
+            + '<p>Description de l\'événement :</p>'
             + '<textarea id="descInput" rows="10" cols="30">Facultatif...</textarea>'
             + '</form>'
             );
     //Affichage du bouton d'enregistrement
     $("#newEventSubmit").css({display: "block"});
+    $("#newEventSubmit").attr("value", "Enregistrer");
+    //Affichage du bouton d'annulation
+    $("#undo").css({display: "block"});
+    //Action d'annulation
+    $("#undo").click(function() {
+        displayListEvents(container, selectedDate);
+    });
 
     //Effacement du contenu de la textarea en cas de 1er clic
     $("#descInput").click(function() {
@@ -188,6 +447,7 @@ function displayAddEventForm(container) {
     });
 
     //Traitement asynchrone du formulaire
+    $("#addEventForm").unbind('submit');
     $("#addEventForm").submit(function() {
         var newEventStatus = $("#newEventStatus");
         newEventStatus.css({display: "block"});
@@ -215,7 +475,6 @@ function displayAddEventForm(container) {
                 //Si la date de début et de fin et la même, l'heure de fin doit être
                 //strictement supérieure à celle de début
                 setNotification("Veuillez entrer une horaire de fin posterieure à celle de début");
-
             } else {
                 //On peut traiter le formulaire
                 $.ajax({
@@ -237,14 +496,18 @@ function displayAddEventForm(container) {
                         var result = JSON.parse(data);
                         if (result.status == "bddConnectionFailed") {
                             setNotification("Erreur de connexion à la base de données");
+                        } else if (result.status == "unidentified") {
+                            setNotification("Veuillez vous connecter afin d'utiliser Duckalendar");
                         } else if (result.status == "inputsError") {
                             setNotification("Erreur sur les formulaires");
                         } else if (result.status == "existsAlready") {
-                            setNotification("L'évènement " + eventNameValue + " éxiste déjà à cette date");
+                            setNotification("L'événement \"" + eventNameValue + "\" existe déjà à cette date");
                         } else if (result.status == "insertionFailed") {
-                            setNotification("L'insertion de l'évènement en base de données à échoué");
+                            setNotification("L'insertion de l'événement en base de données à échoué");
                         } else if (result.status == "unknownReq") {
                             setNotification("Requête inconnue par le serveur");
+                        } else if (result.status == "unexpectedEOF") {
+                            setNotification("Fin inattendue du script serveur");
                         } else if (result.status == "ok") {
                             setNotification("Evènement ajouté avec succès");
                             displayListEvents($("#innerRightPanel"), selectedDate);
@@ -252,6 +515,12 @@ function displayAddEventForm(container) {
                         } else {
                             setNotification("Réponse du serveur inconnue");
                         }
+                        //Faire un drawMonth fait planter le serveur
+                        //(trop de requêtes AJAX)
+                        //drawMonth(m, y);
+                        //---------------
+                        //Comment mettre la classe .hasEvent sans
+                        //réécrire tout le calendrier ?
                     }
                 });
             }
@@ -263,11 +532,13 @@ function displayAddEventForm(container) {
 }
 
 /**
- * Affiche dans le conteneur html la liste des évènements du jour.
+ * Affiche dans le conteneur html la liste des événements du jour.
  * @param {} container Le conteneur html
- * @param {Date} selectedDate La date dont les évènements sont à afficher
+ * @param {Date} selectedDate La date dont les événements sont à afficher
  */
 function displayListEvents(container, selectedDate) {
+    $("#undo").css({display: "none"});
+    $("#newEventSubmit").css({display: "none"});
     $.ajax({
         url: 'eventsList.ajax.php',
         type: 'POST',
@@ -284,38 +555,58 @@ function displayListEvents(container, selectedDate) {
             } else if (result.status == "inputError") {
                 setNotification("Erreur de données en entrée du serveur");
             } else if (result.status == "bddConnectionError") {
-                setNotification("Erreur de connexion à la base de données. Liste des évènements du jour indisponible");
+                setNotification("Erreur de connexion à la base de données. Liste des événements du jour indisponible");
             } else if (result.status == "ok") {
                 //Ok
-                var newHtml = "<dl>";
-                for (var i = 0; i < result.eventsNb; i++) {
+                container.html("<dl>");
+                displayedEventsNb = result.eventsNb;
+                for (var i = 0; i < displayedEventsNb; i++) {
                     var event = result.eventsArray[i];
-                    newHtml += '<dt id="' + event.name + '">[' + event.beginTime + "] " + event.name + "</dt>";
+                    displayedEvents[i] = event.name;
+                    container.append('<dt id="e' + i + '">' + '<img id="img' + i + '" alt="delete" src="/Duckalendar/images/moins.png" class="deleteEventImg" />' + '<span class="displayedEventTitle">[' + event.beginTime + "] " + event.name + '</span></dt>');
                     if (event.desc != "") {
-                        newHtml += '<dd class="eventDesc">' + event.desc + '</dd>';
+                        container.append('<dd class="eventDesc">' + event.desc + '</dd>');
                     }
-                    
-                    $("#" + event.name).click(function() {
-                        displayModifForm(container,
-                                         event.name,
-                                         selectedDate);
+                    container.append('<hr />');
+
+                    //handler du clic sur chaque événement
+                    $("#e" + i).click(function() {
+                        if (imgClicked) {
+                            deleteEventIntoDatabase(displayedEventNameFromId($(this).attr("id")), selectedDate);
+                        } else {
+                            displayOneEvent(container, displayedEventNameFromId($(this).attr("id")), selectedDate);
+                        }
+                        imgClicked = false;
+                    });
+                    //handler du clic sur chaque image de supression
+                    $("#img" + i).click(function() {
+                        imgClicked = true;
                     });
                 }
-                newHtml += "</dl>";
-                container.html(newHtml);
+
+                container.append("</dl>");
             } else {
-                setNotification("Réponse du serveur inconnue");
+                setNotification("Réponse serveur inconnue");
             }
         }
     });
 }
 
-/**
- * Insère une classe html aux jours du calendrier qui possède un ou
- * plusieurs évènement(s) en base de données.
- */
-function displayDateEvents(month, year) {
-
+function displayedEventNameFromId(id) {
+    //l'id est de la forme "eN" où N est un nombre qui
+    //correspond a l'index dans le tableau des noms d'event
+    //On reconstruit N
+    var off;
+    if (id.indexOf("e") == 0) {
+        //l'id commence par e
+        off = 1;
+    }
+    /*if (id.indexOf("img") == 0) {
+     //l'id commence par img
+     off = 3;
+     }*/
+    var index = id.substr(off, id.length - off);
+    return displayedEvents[index];
 }
 
 Number.prototype.isBi = function() {
@@ -449,7 +740,59 @@ function prevMonthYear(m, y) {
     }
 }
 
+function loadEventDaysArray(m, y, callbackFunction) {
+    $.ajax({
+        url: 'daysHaveEventList.ajax.php',
+        type: 'POST',
+        data: {
+            month: m,
+            year: y
+        },
+        error: function(j, textStatus, errorThrown) {
+            setNotification("Erreur du chargement asynchrone des jours ayant un événement");
+        },
+        success: function(data) {
+            var result = JSON.parse(data);
+            if (result.status == "userUnidentified") {
+                setNotification("Vous avez été détecté comme étant déconnecté");
+            } else if (result.status == "bddConnectionError") {
+                setNotification("Erreur de connexion à la base de données");
+            } else if (result.status == "inputError") {
+                setNotification("Erreur des données envoyées aux serveurs");
+            } else if (result.status == "ok") {
+                dayHasEvent = result.array;
+            } else {
+                setNotification("Réponse du serveur inconnue");
+            }
+            callbackFunction(m, y);
+        }
+    });
+}
+
+/**
+ * Renvoie true si cette date possède un ou plusieurs événement(s) pour
+ * l'utilisateur connecté, false sinon.
+ * @param {int} day
+ * @param {int} month
+ * @param {int} year
+ * @returns {boolean}
+ */
+function doesThisDateHaveAnEvent(day) {
+    if (dayHasEvent.indexOf(day + "") == -1) {
+        return false;
+    }
+    return true;
+}
+
 function drawMonth(m, y) {
+    if (getCookie("connection") != null) {
+        loadEventDaysArray(m, y, _internDrawMonth);
+    } else {
+        _internDrawMonth(m, y);
+    }
+}
+
+function _internDrawMonth(m, y) {
     $("#month").html(
             numericToStrMonth(m - 1)
             + " "
@@ -473,10 +816,18 @@ function drawMonth(m, y) {
     while (j < fstJ - 1) {
         if (j > 4) {
             num++;
-            content += '<td class="noWork noMonth monthDown">' + num + '</td>';
+            if (doesThisDateHaveAnEvent(num, m, y)) {
+                content += '<td class="noWork noMonth monthDown hasEvent>' + num + '</td>';
+            } else {
+                content += '<td class="noWork noMonth monthDown">' + num + '</td>';
+            }
         } else {
             var num = lstMonthDMax - fstJ + j + 2;
-            content += '<td class = "noMonth monthDown">' + num + '</td>';
+            if (doesThisDateHaveAnEvent(num, m, y)) {
+                content += '<td class = "noMonth monthDown hasEvent">' + num + '</td>';
+            } else {
+                content += '<td class = "noMonth monthDown">' + num + '</td>';
+            }
         }
         j++;
     }
@@ -496,11 +847,20 @@ function drawMonth(m, y) {
                 } else {
                     bal = '<td class="month';
                 }
-                if (j >= 5) {
-                    bal += ' noWork">';
-                } else {
-                    bal += '">';
+                if (doesThisDateHaveAnEvent(i, m, y)) {
+                    bal += ' hasEvent';
                 }
+                if (j >= 5) {
+                    bal += ' noWork"';
+                } else {
+                    bal += '"';
+                }
+                if ((i == selectedDate.getDate())
+                        && (m == selectedDate.getMonth() + 1)
+                        && (y == selectedDate.getFullYear())) {
+                    bal += ' id="selectedDay"';
+                }
+                bal += ">";
                 content += bal + i + "</td>";
                 j++;
             }
@@ -509,9 +869,17 @@ function drawMonth(m, y) {
                 k++;
                 var bal;
                 if (j > 4) {
-                    bal = '<td class = "noWork noMonth monthUp">';
+                    if (doesThisDateHaveAnEvent(k, m, y)) {
+                        bal = '<td class = "noWork noMonth monthUp hasEvent">';
+                    } else {
+                        bal = '<td class = "noWork noMonth monthUp">';
+                    }
                 } else {
-                    bal = '<td class = "noMonth monthUp">';
+                    if (doesThisDateHaveAnEvent(k, m, y)) {
+                        bal = '<td class = "noMonth monthUp hasEvent">';
+                    } else {
+                        bal = '<td class = "noMonth monthUp">';
+                    }
                 }
                 content += bal + k + "</td>";
                 j++;
@@ -521,10 +889,11 @@ function drawMonth(m, y) {
         }
     }
     calBody.append(content);
-    displayDateEvents(m, y);
 
     $(".month").click(
             function() {
+                $(".month").removeAttr("id");
+                $(this).attr("id", "selectedDay");
                 var login = getCookie("connection");
                 if (login == null) {
                     setNotification("Veuillez vous connecter afin de pouvoir utiliser Duckalendar");
@@ -534,7 +903,7 @@ function drawMonth(m, y) {
                     panel.css({display: "block"});
                     panel.animate({right: '0%'});
                     stretched = true;
-                    selectedDay = $(this).text();
+                    var selectedDay = $(this).text();
 
                     $("#topRightPanel").html(
                             selectedDay
@@ -628,19 +997,15 @@ function monthUp() {
     drawMonth(m, y);
 }
 
-var date = new Date();
-var selectedDay = date.getDate();
-var selectedDate;
-var m = date.getMonth() + 1;
-var y = date.getFullYear();
-var stretched = false;
-var addEventFormDisplayed = false;
+$(document).ready(function() {
+    drawMonth(m, y);
+    $("#left").click(function() {
+        monthDown();
+    });
+    $("#right").click(function() {
+        monthUp();
+    });
+    printHour();
+});
 
-drawMonth(m, y);
-$("#left").click(function() {
-    monthDown();
-});
-$("#right").click(function() {
-    monthUp();
-});
-window.onload = printHour();
+//window.onload = printHour();

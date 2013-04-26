@@ -17,6 +17,7 @@ class Event {
     private $_endTime;
     private $_endDate;
 
+    
     function __construct($login, $date, $name) {
         $this->_owner = $login;
         $this->_beginDate = new DateTime($date);
@@ -126,19 +127,34 @@ class Event {
      * Lève une BddInsertionFailedException si la mise à jour a échoué.
      * @param BddConnection $bddconnection La connexion à la base de données
      * @param string $tableName La table des évènements de la base de données
+     * @param string $newName Le nouveau nom de l'évènement. Si chaine vide, alors
+     * le nom n'est pas changé.
      * @throws BddNotConnectedException
      * @throws NoSuchEventException
      * @throws BddInsertionFailedException
      */
-    public function updateDatabase($bddconnection, $tableName) {
+    public function updateDatabase($bddconnection, $tableName, $newName) {
         if (!$bddconnection->isConnected()) {
             throw new BddNotConnectedException();
         }
-        $sql = "UPDATE $tableName SET desc=?, beginTime=?, endTime=?, endDate=?";
-        $values = array($this->getDescription(),
+        $sql = 'SELECT * FROM '.$tableName.' WHERE login="'.$this->getLogin().'" AND name="'.$this->getEventName().'" AND `date`="'.$this->getBeginDate()->format("Y-m-d").'"';
+        $reqres = $bddconnection->query($sql);
+        $res = $reqres->fetch();
+        if (!$res) {
+            throw new NoSuchEventException();
+        }
+        if ($newName == "") {
+            $newName = $this->getEventName();
+        }
+        $sql = "UPDATE $tableName SET name=?, `desc`=?, beginTime=?, endTime=?, endDate=? WHERE login=? AND name=? AND `date`=?";
+        $values = array($newName,
+                        $this->getDescription(),
                         $this->getBeginTime()->format("H:i"),
                         $this->getEndTime()->format("H:i"),
-                        $this->getEndDate()->format("Y-m-d"));
+                        $this->getEndDate()->format("Y-m-d"),
+                        $this->getLogin(),
+                        $this->getEventName(),
+                        $this->getBeginDate()->format("Y-m-d"));
         $status = $bddconnection->preparedQuery($sql, $values);
         if (!$status) {
             throw new BddInsertionFailedException();
@@ -161,6 +177,11 @@ class Event {
     public function deleteIntoDatabase($bddconnection, $tableName) {
         if (!$bddconnection->isConnected()) {
             throw new BddNotConnectedException();
+        }
+        try {
+            $this->constructFromDatabase($bddconnection, $tableName);
+        } catch (NoSuchEventException $e) {
+            throw $e;
         }
         $sql = "DELETE FROM $tableName WHERE login=? AND `date`=? AND name=?";
         $values = array($this->getLogin(),

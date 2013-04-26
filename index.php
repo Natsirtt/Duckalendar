@@ -10,7 +10,7 @@ if (isset($_GET['status'])) {
     if ($_GET['status'] == "deco") {
         $notification = "Vous êtes maintenant déconnecté";
     } else if ($_GET['status'] == "connected") {
-        $notification = "Bonjour " . $_COOKIE['connection'];
+//        $notification = "Bonjour " . $_COOKIE['connection'];
     } else if ($_GET['status'] == "conErr") {
         $notification = "La connexion a échouée";
     } else if ($_GET['status'] == "noUserOrPassErr") {
@@ -76,6 +76,7 @@ require_once 'inc/header.inc.php';
     </div>
     <div id="bottomRightPanel">
         <img src="/Duckalendar/images/plus.png" alt="plus" id="plus" />
+        <img src="/Duckalendar/images/undo.png" alt="undo" id="undo" />
         <form id="addEventForm" method="post" action="">
             <input type="submit" value="Enregistrer" id="newEventSubmit" />
         </form>
