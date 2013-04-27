@@ -18,11 +18,13 @@ if (isset($_GET['status'])) {
     } else if ($_GET['status'] == "alreadyCon") {
         $notification = "Veuillez vous déconnecter avant d'ouvrir un autre compte";
     } else if ($_GET['status'] == "ipdeco") {
-        $notification = "Votre adresse ip ayant changé, vous avez été déconnecté par mesure de sécurité";
-    } else if ($_GET['status'] == "iperr") {
-        $notification = "Erreur lors de la récupération de vôtre ancienne ip. Déconnexion forcée";
+        $notification = "Par mesure de sécurité, vous avez été déconnecté suite au changement de votre adresse ip";
+    } else if ($_GET['status'] == "usrerr") {
+        $notification = "Cookie de connection érroné. Déconnexion forcée";
     } else if ($_GET['status'] == "bddError") {
         $notification = "Erreur de connexion à la base de données";
+    } else if ($_GET['status'] == "connectionRequired") {
+        $notification = "Veuillez vous connecter afin d'utiliser Duckalendar";
     }
 }
 
@@ -39,7 +41,7 @@ require_once 'inc/header.inc.php';
                 <input type="text" name="login" value=<?php echo '"' . $_GET['login'] . '"' ?> class="round" />
             <?php } ?>
             <br />
-            <input type="password" value="password" name="password" class="round" id="passwordInput" /><br />
+            <input type="password" name="password" class="round" id="passwordInput" <?php if(isset($_GET['login'])) {echo 'autofocus="autofocus"';} else { echo 'value="password"';} ?>/><br />
             <input type="submit" value="Connexion" />
             <a href="inscription.php">Inscription</a>
         <?php } else { ?>
@@ -48,6 +50,21 @@ require_once 'inc/header.inc.php';
             <?php } ?>
         </form>
 
+</div>
+
+<div id="leftPanel">
+    <div id="topLeftPanel">
+        <h3>Prochains événements</h3>
+    </div>
+    <div id="innerLeftPanel">
+        <?php
+        //Affichage des prochains événements
+                
+        ?>
+    </div>
+    <div id="bottomLeftPanel">
+        <img src="/Duckalendar/images/fleche gauche.png" alt="toggle" id="leftPanelToggle" />
+    </div>
 </div>
 
 <p id="date"></p>
@@ -67,6 +84,7 @@ require_once 'inc/header.inc.php';
     <tbody id="calendarBody">        
     </tbody>
 </table>
+
 <div id="rightPanel">
     <div id="topRightPanel">
 

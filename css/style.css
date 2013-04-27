@@ -1,81 +1,89 @@
 body {
-    color : silver;
-    background-color : black;
-    width : 100%;
+    color: silver;
+    background-color: black;
+    width: 100%;
     overflow-x: hidden;
     cursor: default;
 }
 
 #calendar {
-    width : 45%;
-    margin : auto;
-    border-collapse : collapse;
-    font-weight : 900;
-    font-size : 1.5em;
+    width: 45%;
+    margin: auto;
+    border-collapse: collapse;
+    font-weight: 900;
+    font-size: 1.5em;
+    position: absolute;
+    top: 5em;
+    left: 27.5%;
+}
+
+#bodyContent { /*La div principal de la page setting.php*/
+    width: 45%;
+    margin: auto;
     position: absolute;
     top: 5em;
     left: 27.5%;
 }
 
 #calendar th {
-    padding-bottom : 10px;
+    padding-bottom: 10px;
 }
 
 #calendar td {
-    text-align : center;
-    color : silver;
-    background-color : black;
-    border : gray solid 2px;
-    width : 10%;
-    height : 75px;
+    text-align: center;
+    color: silver;
+    background-color: black;
+    border: gray solid 2px;
+    width: 10%;
+    height: 75px;
 }
 
-#calendar .noWork {
+.noWork {
     background-color: #222222;
 }
 
-#calendar .noMonth {
-    color : #444444;
+.noMonth {
+    color: #444444;
     cursor: pointer;
 }
 
-#calendar .noMonth:hover {
+.noMonth:hover {
     color: #BBBBBB;
 }
 
-#calendar .month {
+.month {
     cursor: pointer;
 }
 
-#calendar .month:hover {
+.month:hover {
     background-color: #444444;
 }
 
-#calendar .hasEvent {
+.hasEvent {
     background-color: #410f0f;
 }
 
-#calendar .today {
+.today {
     text-decoration: underline;
 }
 
-#calendar #selectedDay {
-    background-color : #9e9d9d;
+#selectedDay {
+    background-color: #9e9d9d;
     color: black;
 }
 
 #date {
-    margin : auto;
-    text-align : center;
-    font-size : 1.5em;
-    font-weight : 900;
+    margin: auto;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: 900;
 }
 
 #month {
     margin: auto;
     text-align: center;
-    font-size : 1.3em;
-    font-weight : bold;
+    font-size: 1.3em;
+    font-weight: bold;
     position: relative;
     top: 1.4em;
     width: 25%;
@@ -98,16 +106,16 @@ body {
 }
 
 #theDuck {
-    position:absolute;
+    position: absolute;
     left: 0%;
     top: 0%;
-    width: 15%;
+    width: 13%;
 }
 
 #notification {
     position: absolute;
-    left: 18%;
-    top: 5%;
+    left: 15%;
+    top: 3%;
 }
 
 #connect {
@@ -143,32 +151,74 @@ body {
 }
 
 a {
-  color : gray;
+  color: gray;
 }
 
 #decoButton {
     cursor: pointer;
 }
 
-#rightPanel {
+#topLeftPanel h3 {
+    font-size: 1.5em;
+    font-weight: 900;
+    margin: 0px;
+}
+
+#leftPanel {
     background-color: black;
-    color : silver;
-    border-top : solid 2px gray;
-    border-left : solid 2px gray;
-    border-bottom : solid 2px gray;
+    color: silver;
+    border-top: solid 2px gray;
+    border-right: solid 2px gray;
+    border-bottom: solid 2px gray;
     width: 20%;
     height: 450px;
     position: absolute;
-    top : 150px;
+    top: 175px;
+    left: 0%;
+    padding-left: 5px;
+    border-collapse: collapse;
+    display: block;
+}
+
+#innerLeftPanel {
+    border-top: gray solid 2px;
+    height: 83%;
+    overflow-y: auto;
+}
+
+#bottomLeftPanel {
+    border-top: gray solid 2px;
+    height: 30px;
+}
+
+#leftPanelToggle {
+    width: 25px;
+    position: absolute;
+    right: 5px;
+    bottom: 10px;
+    cursor: pointer;
+}
+
+#rightPanel {
+    background-color: black;
+    color: silver;
+    border-top: solid 2px gray;
+    border-left: solid 2px gray;
+    border-bottom: solid 2px gray;
+    width: 20%;
+    height: 450px;
+    position: absolute;
+    top: 150px;
     right: -22%;
     padding-left: 5px;
     border-collapse: collapse;
     display: none;
 }
 
-#topRightPanel {
+#topRightPanel h3 {
     font-size: 1.5em;
     font-weight: 900;
+    margin: 0px;
 }
 
 #innerRightPanel {

@@ -45,7 +45,14 @@ if ($bddconnection->isConnected()) {
                     $status = $bddconnection->preparedQuery($sql, $values);
 
                     if ($status) {
-                        $notification = "Vous êtes maintenant inscrit";
+                        $sql = "INSERT INTO settings VALUES (?, ?, ?, ?)";
+                        $values = array($_POST['login'], "#222222", "#410f0f", 7);
+                        $status = $bddconnection->preparedQuery($sql, $values);
+                        if ($status) {
+                            $notification = "Vous êtes maintenant inscrit";
+                        } else {
+                            $notification = "Vous êtes inscrit, cependant l'initialisation de vos paramètres à échoué";
+                        }
                     } else {
                         $notification = "Erreur lors de l'inscription, veuillez réessayer";
                     }

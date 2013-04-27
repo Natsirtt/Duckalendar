@@ -176,8 +176,8 @@ function modifEvent() {
     }
     var endDate = newDateFromStr(endDateValue);
     if (selectedDate.compare(endDate) == 1) {
-            setNotification("Veuilez entrer une date de fin posterieure ou identique à celle de début");
-            ok = false;
+        setNotification("Veuilez entrer une date de fin posterieure ou identique à celle de début");
+        ok = false;
     }
     if (beginTimeValue == "") {
         beginTimeValue = $("#panelBeginTime").html();
@@ -194,7 +194,7 @@ function modifEvent() {
         setNotification("Veuillez entrer une horaire de fin posterieure à celle de début");
         ok = false;
     }
-    
+
     if (ok) {
         var newName = $("#panelEventName").val();
         var originalName = $("#panelOriginalName").val();
@@ -245,7 +245,7 @@ function modifEvent() {
  * et de le supprimer.
  */
 function displayOneEvent(container, eventName, date) {
-    $("#newEventSubmit").css({display :'none'});
+    $("#newEventSubmit").css({display: 'none'});
     //Requête ajax afin de récupérer les informations 
     //de l'événement
     $.ajax({
@@ -855,10 +855,12 @@ function _internDrawMonth(m, y) {
                 } else {
                     bal += '"';
                 }
-                if ((i == selectedDate.getDate())
-                        && (m == selectedDate.getMonth() + 1)
-                        && (y == selectedDate.getFullYear())) {
-                    bal += ' id="selectedDay"';
+                if (getCookie("connection") != null) { //Un utilisateur non connecté n'est pas concerné
+                    if ((i == selectedDate.getDate())
+                            && (m == selectedDate.getMonth() + 1)
+                            && (y == selectedDate.getFullYear())) {
+                        bal += ' id="selectedDay"';
+                    }
                 }
                 bal += ">";
                 content += bal + i + "</td>";
@@ -906,11 +908,13 @@ function _internDrawMonth(m, y) {
                     var selectedDay = $(this).text();
 
                     $("#topRightPanel").html(
-                            selectedDay
+                            '<h3>'
+                            + selectedDay
                             + " "
                             + numericToStrMonth(m - 1)
                             + " "
                             + y
+                            + '</h3>'
                             );
                     var innerPanel = $("#innerRightPanel");
                     selectedDate = new Date(y, m - 1, selectedDay);
@@ -945,6 +949,33 @@ function _internDrawMonth(m, y) {
                     displayAddEventForm(innerPanel);
                 }
             });
+
+    //Récupération des couleurs de l'utilisateur
+    $.ajax({
+        url: 'userSettings.ajax.php',
+        type: 'POST',
+        data: {
+            //Rien
+        },
+        error: function(j, textStatus, errorThrown) {
+            setNotification("Erreur lors de la récupération de vos paramètres personnels. Utilisation des paramètres par défaut")
+        },
+        success: function(data) {
+            var result = JSON.parse(data);
+            if (result.status == "unidentified") {
+                //On laisse les paramètres par défaut.
+            } else if (result.status == "bddError") {
+                setNotification("Erreur lors de la connexion à la base de données");
+            } else if (result.status == "queryError") {
+                setNotification("Erreur lors d'une requête SQL");
+            } else if (result.status == "ok") {
+                $(".noWork").css({'background-color': result.settings.noWorkColor});
+                $(".hasEvent").css({'background-color': result.settings.hasEventColor});
+            } else {
+                setNotification("Réponse du serveur inconnue");
+            }
+        }
+    });
 
     $(".monthUp").click(
             function() {
@@ -997,14 +1028,41 @@ function monthUp() {
     drawMonth(m, y);
 }
 
+function animateLeftPanelRight() {
+    $("#leftPanel").animate({left: '0%'}, 400, "swing",
+            function() {
+                $("#leftPanelToggle").attr("src", "/Duckalendar/images/fleche gauche.png");
+                $("#leftPanelToggle").unbind('click');
+                $("#leftPanelToggle").click(animateLeftPanelLeft);
+            }
+    );
+}
+
+function animateLeftPanelLeft() {
+    $("#leftPanel").animate({left: '-18.5%'}, 400, "swing",
+            function() {
+                $("#leftPanelToggle").attr("src", "/Duckalendar/images/fleche droite.png");
+                $("#leftPanelToggle").unbind('click');
+                $("#leftPanelToggle").click(animateLeftPanelRight);
+            }
+    );
+}
+
 $(document).ready(function() {
     drawMonth(m, y);
+
     $("#left").click(function() {
         monthDown();
     });
+
     $("#right").click(function() {
         monthUp();
     });
+
+    $("#leftPanelToggle").click(function() {
+        animateLeftPanelLeft();
+    });
+
     printHour();
 });
 

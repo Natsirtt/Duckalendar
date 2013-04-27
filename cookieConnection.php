@@ -17,7 +17,7 @@ if (isset($_COOKIE['connection'])) {
                 header('Location: deconnection.php?src=ipdeco');
             }
         } else {
-            header('Location: deconnection?src=iperr.php');
+            header('Location: deconnection.php?src=usrerr');
         }
     }
 }

@@ -5,6 +5,7 @@
 
     <head>
         <title>Duckalendar - <?php if (isset($title)) { echo $title; } ?></title>
+        <noscript><meta http-equiv="refresh" content="0; URL=/Duckalendar/noscript.php"></noscript>
         <meta http-equiv="content-type" content="text/html;charset=utf-8" />
         <link rel="stylesheet" type="text/css" href="/Duckalendar/css/style.css" />
 
