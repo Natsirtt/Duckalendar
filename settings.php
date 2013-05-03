@@ -8,25 +8,25 @@ require_once './BddConnectionFailedException.class.php';
 
 //Traitement du formulaire
 if (isset($_COOKIE['connection'])) {
-if (isset($_POST['noWorkColor']) && isset($_POST['hasEventColor']) && isset($_POST['incomingEventsDaysNb'])) {
-    if ($_POST['incomingEventsDaysNb'] <= 0) {
-        $notification = "Le nombre de jours à balayer doit êre supérieur ou égal à 1";
-    } else {
-        try {
-            $inputConnection = new BddConnection(BddConnection::$mysql, "localhost", "duckalendar", "root", "motdepasse");
-        } catch (BddConnectionFailedException $e) {
-            $notification = "Erreur de connexion à la base de données";
-        }
-        if ($inputConnection->isConnected()) {
-            $sql = "UPDATE settings SET noWorkColor=?, hasEventColor=?, incomingEventsDaysNb=? WHERE login=?";
-            $values = array($_POST['noWorkColor'], $_POST['hasEventColor'], $_POST['incomingEventsDaysNb'], $_COOKIE['connection']);
-            $status = $inputConnection->preparedQuery($sql, $values);
-            if (!$status) {
-                $notification = "La modification à échoué";
+    if (isset($_POST['noWorkColor']) && isset($_POST['hasEventColor']) && isset($_POST['incomingEventsDaysNb'])) {
+        if ($_POST['incomingEventsDaysNb'] <= 0) {
+            $notification = "Le nombre de jours à balayer doit êre supérieur ou égal à 1";
+        } else {
+            try {
+                $inputConnection = new BddConnection(BddConnection::$mysql, "localhost", "duckalendar", "root", "motdepasse");
+            } catch (BddConnectionFailedException $e) {
+                $notification = "Erreur de connexion à la base de données";
+            }
+            if ($inputConnection->isConnected()) {
+                $sql = "UPDATE settings SET noWorkColor=?, hasEventColor=?, incomingEventsDaysNb=? WHERE login=?";
+                $values = array($_POST['noWorkColor'], $_POST['hasEventColor'], $_POST['incomingEventsDaysNb'], $_COOKIE['connection']);
+                $status = $inputConnection->preparedQuery($sql, $values);
+                if (!$status) {
+                    $notification = "La modification à échoué";
+                }
             }
         }
     }
-}
 } else {
     header("Location: index.php?status=connectionRequired");
 }
@@ -49,7 +49,8 @@ if ($bddconnection->isConnected()) {
 
 require_once 'inc/header.inc.php';
 
-if ($res) { ?>
+if ($res) {
+    ?>
 
     <div id="bodyContent">
         <form action="" method="post">
@@ -59,12 +60,12 @@ if ($res) { ?>
             <input type="submit" value="Modifier" />
         </form>
 
-    <?php } else { ?>
+<?php } else { ?>
         <h3>Une connexion à la base de données est nécessaire à l'utilisation de cette page.</h3>
         <p>Essayez de rafraîchir la page, ou contactez un administrateur si le problème persiste.</p>
-    <?php } ?>
-        
-    </div>
+<?php } ?>
+
+</div>
 <script type="text/javascript">
     $(document).ready(function() {
         var daysNbChooser = $("#daysNbChooser");

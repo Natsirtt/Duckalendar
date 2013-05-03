@@ -38,36 +38,36 @@ body {
     height: 75px;
 }
 
-.noWork {
+#calendar .noWork {
     background-color: #222222;
 }
 
-.noMonth {
+#calendar .noMonth {
     color: #444444;
     cursor: pointer;
 }
 
-.noMonth:hover {
+#calendar .noMonth:hover {
     color: #BBBBBB;
 }
 
-.month {
+#calendar .month {
     cursor: pointer;
 }
 
-.month:hover {
+#calendar .month:hover {
     background-color: #444444;
 }
 
-.hasEvent {
+#calendar .hasEvent {
     background-color: #410f0f;
 }
 
-.today {
+#calendar .today {
     text-decoration: underline;
 }
 
-#selectedDay {
+#calendar #selectedDay {
     background-color: #9e9d9d;
     color: black;
 }
