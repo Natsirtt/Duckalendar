@@ -400,6 +400,9 @@ function deleteEventIntoDatabase(eventName, date) {
             } else if (result.status == "delFailed") {
                 setNotification("La suppression de l'évènement a rencontré un problème");
             } else if (result.status == "ok") {
+                if (!doesThisDateHaveAnEvent(date.getDate())) {
+                    $("selectedDay").removeClass("hasEvent");
+                }
 //                setNotification("L'évènement à bien été supprimé");
             } else {
                 setNotification("Etat du serveur inconnu");
@@ -510,6 +513,7 @@ function displayAddEventForm(container) {
                             setNotification("Fin inattendue du script serveur");
                         } else if (result.status == "ok") {
                             setNotification("Evènement ajouté avec succès");
+                            $("#selectedDay").addClass("hasEvent");
                             displayListEvents($("#innerRightPanel"), selectedDate);
                             $("#newEventSubmit").css({display: "none"});
                         } else {
@@ -778,7 +782,11 @@ function loadEventDaysArray(m, y, callbackFunction) {
  * @returns {boolean}
  */
 function doesThisDateHaveAnEvent(day) {
-    if (dayHasEvent.indexOf(day + "") == -1) {
+    var dayStr = day + "";
+    if (day < 10) {
+        dayStr = "0" + dayStr;
+    }
+    if (dayHasEvent.indexOf(dayStr) == -1) {
         return false;
     }
     return true;

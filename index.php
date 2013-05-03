@@ -58,8 +58,17 @@ require_once 'inc/header.inc.php';
     </div>
     <div id="innerLeftPanel">
         <?php
+    require_once './BddConnection.class.php';
+    require_once './BddConnectionFailedException.class.php';
+    require_once './BddNotConnectedException.class.php';
+    require_once './Events.class.php';
         //Affichage des prochains événements
-                
+        $bddconnection = null;
+        try {
+            $bddconnexion = new BddConnection(BddConnection::$mysql, "localhost", "events", "root", "motdepasse");
+        } catch (BddConnectionFailedException $e) {
+            
+        }
         ?>
     </div>
     <div id="bottomLeftPanel">
