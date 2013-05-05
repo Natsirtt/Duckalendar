@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 3.3.9
+-- version 3.5.2.2
 -- http://www.phpmyadmin.net
 --
--- Serveur: localhost
--- Généré le : Sam 04 Mai 2013 à 12:00
--- Version du serveur: 5.5.8
--- Version de PHP: 5.3.5
+-- Client: 127.0.0.1
+-- Généré le: Dim 05 Mai 2013 à 03:06
+-- Version du serveur: 5.5.27
+-- Version de PHP: 5.4.7
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `events` (
 
 INSERT INTO `events` (`login`, `date`, `name`, `desc`, `beginTime`, `endTime`, `endDate`) VALUES
 ('Natsirtt', '2013-05-05', 'lmkm', '', '07:00:00', '09:00:00', '2013-12-31'),
-('Natsirtt', '2013-05-06', 'lskk', '', '07:00:00', '09:00:00', '2013-12-31');
+('Natsirtt', '2013-05-06', 'lskk', 'Coucou les kikoos !', '07:00:00', '09:00:00', '2013-12-31');
 
 -- --------------------------------------------------------
 
@@ -63,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 --
 
 INSERT INTO `settings` (`login`, `noWorkColor`, `hasEventColor`, `incomingEventsDaysNb`) VALUES
+('Greg', '#222222', '#410f0f', 7),
 ('Natsirtt', '#243537', '#410f0f', 7);
 
 -- --------------------------------------------------------
@@ -84,4 +86,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`login`, `password`, `salt`, `ip`) VALUES
-('Natsirtt', '?pjuUXkq6m8V6', '?p/''.?!5hl;t?3w#.sa6,84o5%.]y!,1', '127.0.0.1');
+('Greg', '%lMtmQdeaQ1Og', '%l&9z{fu/!c7fm+&pb!(ws(6.j4ly.a)', '::1'),
+('Natsirtt', '?pjuUXkq6m8V6', '?p/''.?!5hl;t?3w#.sa6,84o5%.]y!,1', '::1');
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
