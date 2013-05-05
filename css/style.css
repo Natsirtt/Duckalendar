@@ -7,22 +7,34 @@ body {
 }
 
 #calendar {
+    position: absolute;
     width: 45%;
+    height: 65%;
     margin: auto;
     border-collapse: collapse;
-    font-weight: 900;
+    font-weight: bolder;
     font-size: 1.5em;
-    position: absolute;
-    top: 5em;
+    top: 18.5%;
     left: 27.5%;
 }
 
 #bodyContent { /*La div principal de la page setting.php*/
-    width: 45%;
+    width: 62%;
     margin: auto;
     position: absolute;
-    top: 5em;
-    left: 27.5%;
+    top: 22%;
+    left: 19%;
+}
+
+#bodyContent form {
+    border : solid gray 2px;
+    padding : 2%;
+}
+
+#bodyContent label {
+    width : 600px;
+    float : left;
+    display : block;
 }
 
 #calendar th {
@@ -76,7 +88,7 @@ body {
     margin: auto;
     text-align: center;
     font-size: 1.5em;
-    font-weight: 900;
+    font-weight: bolder;
 }
 
 #month {
@@ -84,8 +96,9 @@ body {
     text-align: center;
     font-size: 1.3em;
     font-weight: bold;
-    position: relative;
-    top: 1.4em;
+    position: absolute;
+    left : 37.5%;
+    top: 13%;
     width: 25%;
 }
 
@@ -94,7 +107,7 @@ body {
     right: 30%;
     width: 2.5em;
     height: 2.5em;
-    top: 6em;
+    top: 13%;
 }
 
 #left {
@@ -102,7 +115,7 @@ body {
     left: 30%;
     width: 2.5em;
     height: 2.5em;
-    top: 6em;
+    top: 13%;
 }
 
 #theDuck {
@@ -114,20 +127,44 @@ body {
 
 #notification {
     position: absolute;
-    left: 15%;
+    width : 25%;
+    height : 12%;
+    left: 14%;
     top: 3%;
 }
 
 #connect {
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 1%;
+    top: 1%;
+}
+
+#p0{
+    padding : 2%;
+    position: absolute;
+    left: 32%;
+    top: 17%;
+}
+
+#p1{
+    padding : 2%;
+    position: absolute;
+    left: 32%;
+    top: 68%;
 }
 
 #inscription {
+    padding : 2%;
+    border : solid gray 2px;
     position: absolute;
-    left: 20%;
+    left: 35%;
     top: 30%;
+}
+
+#inscription label {
+    width : 150px;
+    display : block;
+    float : left;
 }
 
 .round {
@@ -153,7 +190,7 @@ body {
 a {
   color: gray;
 }
-
+/*Boutton de deconnection*/
 #decoButton {
     cursor: pointer;
 }
@@ -171,9 +208,9 @@ a {
     border-right: solid 2px gray;
     border-bottom: solid 2px gray;
     width: 20%;
-    height: 450px;
+    height: 65%;
     position: absolute;
-    top: 175px;
+    top: 25%;
     left: 0%;
     padding-left: 5px;
     border-collapse: collapse;
@@ -188,14 +225,18 @@ a {
 
 #bottomLeftPanel {
     border-top: gray solid 2px;
-    height: 30px;
+    position : absolute;
+    height: 10%;
+    bottom: 0%;
+    width : 100%;
+    left : 0%;
 }
 
 #leftPanelToggle {
-    width: 25px;
+    width: 10%;
     position: absolute;
-    right: 5px;
-    bottom: 10px;
+    right: 2%;
+    bottom: 20%;
     cursor: pointer;
 }
 
@@ -206,30 +247,45 @@ a {
     border-left: solid 2px gray;
     border-bottom: solid 2px gray;
     width: 20%;
-    height: 450px;
+    height: 65%;
     position: absolute;
-    top: 150px;
-    right: -22%;
+    top: 25%;
+    right: 0%;
     padding-left: 5px;
     border-collapse: collapse;
     display: none;
 }
 
-#topRightPanel h3 {
-    font-size: 1.5em;
-    font-weight: 900;
+#topRightPanel {
+    position : absolute;
+    border-bottom : gray solid 2px;
+    top : 0%;
+    left : 0%;
+    width : 100%;
+    height : 7%;
+}
+
+#topRightPanel h3 {    
+    font-size: 150%; 
+    font-weight: bolder;
     margin: 0px;
 }
 
 #innerRightPanel {
+    position : absolute;
     border-top: gray solid 2px;
+    top : 7%;
+    width : 98%;
     height: 83%;
     overflow-y: auto;
 }
 
 #bottomRightPanel {
-    border-top: gray solid 2px;
-    height: 30px;
+    position : absolute;
+    height: 10%;
+    width : 100%;
+    left : 0%;
+    bottom : 0%;
 }
 
 .eventDesc {
@@ -249,30 +305,28 @@ a {
 
 #plus {
   position: absolute;
-  bottom: 4px;
-  left: 0px;
-  /*width: 12%;*/
-  width: 25px;
-  /*border: 1px solid gray;*/
+  bottom: 5%;
+  left: 2%;
+  width: 10%;
   padding: 5px;
   cursor: pointer;
 }
 
 #undo {
-    width: 25px;
-    position: absolute;
-    bottom: 8px;
-    left: 35px;
-    cursor: pointer;
-    display: none;
+  position: absolute;
+  bottom: 5%;
+  right: 15%;
+  width: 10%;
+  padding: 5px;
+  cursor: pointer;
 }
 
 #newEventSubmit {
     display: none;
     cursor: pointer;
     position: absolute;
-    bottom: 10px;
-    left: 70px;
+    bottom: 10%;
+    left: 25%;
 }
 
 .deleteEventImg {
@@ -303,9 +357,9 @@ a {
 
 #panelArrow {
     position: absolute;
-    bottom: 4px;
+    bottom: 5%;
     right: 0px;
-    width: 25px;
+    width: 10%;
     padding: 5px;
     cursor: pointer;
 }

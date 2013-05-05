@@ -68,20 +68,34 @@ if ($bddconnection->isConnected()) {
 
 include_once 'inc/header.inc.php';
 ?>
-
+<div id="inscriptionBody">
 <script src="inputs.js"></script>
-
+<p id="p0">
+  Veuillez vous inscrire.
+</p>
 <div id="inscription">
     <form action="" method="post">
+        <p>
+        <label>Login :</label>
         <input type="text" name="login" value="login" class="round" id="loginInput" />
         <img src="/Duckalendar/images/ajax-loader.gif" alt="loading" id="loadingImg" /><br />
+        </p>
         <p id="loginNotif"></p>
+        <p>
+        <label>Mot de passe :</label> 
         <input type="password" name="password" value="password" class="round" /><br />
+        </p>
+        <p>
+        <label>Validation :</label>
         <input type="password" name="rePassword" value ="password" class="round" /><br />
+        </p>
         <input type="submit" value="Inscription" id="submitButton" />
     </form>
 </div>
-
+<p id="p1">
+  Sans rire, vous ne regretterez pas !
+</p>
+</div id="inscriptionBody">
 <script type="text/javascript">
     //Gestion de l'AJAX
     function disableSubmit() {
@@ -99,7 +113,6 @@ include_once 'inc/header.inc.php';
                 $("#loginInput").keyup(function() {
                     var val = $(this).val().trim();
                     if (val == "") {
-                        $("#loginNotif").text("Veuillez entrer un login");
                         disableSubmit();
                     } else {
                         $("#loadingImg").css({visibility: "visible"});
@@ -117,10 +130,8 @@ include_once 'inc/header.inc.php';
                                 $("#loadingImg").css({visibility: "hidden"});
                                 var loginNotif = $("#loginNotif");
                                 if (data == "exists") {
-                                    loginNotif.text("Login déjà utilisé");
                                     disableSubmit();
                                 } else if (data == "doesntExist") {
-                                    loginNotif.text("Login disponible");
                                     enableSublmit();
                                 } else if (data == "bddError") {
                                     loginNotif.text("Erreur lors de la connexion à la base de données");

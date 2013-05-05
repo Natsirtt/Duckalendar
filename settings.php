@@ -56,10 +56,11 @@ if ($res) {
     ?>
 
     <div id="bodyContent">
+        <h1>Configuration</h1>
         <form action="" method="post">
-            <p>Couleur des jours feriés : <input type="color" value="<?php echo $res['noWorkColor'] ?>" name="noWorkColor" /></p>
-            <p>Couleur des jours à événements : <input type="color" value="<?php echo $res['hasEventColor'] ?>" name="hasEventColor" /></p> 
-            <p>Nombre de jours à balayer pour afficher les prochains événements : <input type="number" value="<?php echo $res['incomingEventsDaysNb']; ?>" name="incomingEventsDaysNb" id="daysNbChooser" /></p>
+            <p><label>Couleur des jours feriés : </label><input type="color" value="<?php echo $res['noWorkColor'] ?>" name="noWorkColor" /></p>
+            <p><label>Couleur des jours à événements : </label><input type="color" value="<?php echo $res['hasEventColor'] ?>" name="hasEventColor" /></p> 
+            <p><label>Nombre de jours à balayer pour afficher les prochains événements :</label> <input type="number" value="<?php echo $res['incomingEventsDaysNb']; ?>" name="incomingEventsDaysNb" id="daysNbChooser" /></p>
             <input type="submit" value="Modifier" />
         </form>
 
@@ -68,7 +69,7 @@ if ($res) {
         <p>Essayez de rafraîchir la page, ou contactez un administrateur si le problème persiste.</p>
 <?php } ?>
 
-</div>
+    </div>
 <script type="text/javascript">
     $(document).ready(function() {
         var daysNbChooser = $("#daysNbChooser");
