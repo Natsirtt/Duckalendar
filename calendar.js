@@ -15,6 +15,69 @@ var imgClicked = false;
 //La taille d'un input de titre d'événement
 var eventNameInputLength = 25;
 
+var JOURS_FERIES = {
+    JOUR_DE_L_AN: {day: 1, month: 1},
+    FETE_DU_TRAVAIL: {day: 1, month: 5},
+    FETE_DE_LA_VICTOIRE: {day: 8, month: 5},
+    FETE_NATIONALE: {day: 14, month: 7},
+    ASSOMPTION: {day: 15, month: 8},
+    TOUSSAINT: {day: 1, month: 11},
+    ARMISTICE: {day: 11, month: 11},
+    NOEL: {day: 25, month: 12}
+};
+
+var JOURS_FERIES_VOLANTS = {
+    ASCENSION: {offset: 38}, //39 après paques, 38 après le lundi de paques
+    PENTECOTE: {offset: 49} //50 après paques, 49 après le lundi de paques
+};
+
+//Fonction sur les jours fériés
+function getEasterMonday(year) {
+    // Recherche de Pâques, algo Th. O'Beirne validité An < 2100
+    var n = (year % 19);
+    var c = Math.floor(year / 100);
+    var u = year % 100;
+    var s = Math.floor(c / 4);
+    var t = c % 4;
+    var p = Math.floor((c + 8) / 25);
+    var q = Math.floor((c - p + 1) / 3);
+    var e = (19 * n + c - s - q + 15) % 30;
+    var b = Math.floor(u / 4);
+    var d = u % 4;
+    var L = (32 + 2 * t + 2 * b - e - d) % 7;
+    var h = Math.floor((n + 11 * e + 22 * L) / 451);
+    var m = Math.floor((e + L - 7 * h + 114) / 31);
+    var j = (e + L - 7 * h + 114) % 31;
+    m = m + Math.floor((j + 2) / 31);
+    j = (j + 2) % 31;
+    return new Date(year, m - 1, d);
+}
+
+function getHolidayArray(month, year) {
+    var arr = new Array();
+    for (var day in JOURS_FERIES) {
+        if (JOURS_FERIES[day].month == month) {
+            arr.push(JOURS_FERIES[day].day);
+        }
+    }
+    //Lundi de paques
+    var easter = getEasterMonday(year);
+    if (easter.getMonth() + 1 == month) {
+        arr.push(easter.getDate());
+    }
+    var asc = new Date(easter);
+    var pen = new Date(easter);
+    asc.setDate(asc.getDate() + JOURS_FERIES_VOLANTS.ASCENSION.offset);
+    pen.setDate(pen.getDate() + JOURS_FERIES_VOLANTS.PENTECOTE.offset);
+    if (asc.getMonth() + 1 == month) {
+        arr.push(asc.getDate());
+    }
+    if (pen.getMonth() + 1 == month) {
+        arr.push(pen.getDate());
+    }
+    return arr;
+}
+
 //Fonctions pour les cookies
 function getCookie(cookieName) {
     var cookContent = document.cookie;
@@ -777,8 +840,6 @@ function loadEventDaysArray(m, y, callbackFunction) {
  * Renvoie true si cette date possède un ou plusieurs événement(s) pour
  * l'utilisateur connecté, false sinon.
  * @param {int} day
- * @param {int} month
- * @param {int} year
  * @returns {boolean}
  */
 function doesThisDateHaveAnEvent(day) {
@@ -796,11 +857,13 @@ function drawMonth(m, y) {
     if (getCookie("connection") != null) {
         loadEventDaysArray(m, y, _internDrawMonth);
     } else {
+        dayHasEvent = new Array();
         _internDrawMonth(m, y);
     }
 }
 
 function _internDrawMonth(m, y) {
+    var holidays = getHolidayArray(m, y);
     $("#month").html(
             numericToStrMonth(m - 1)
             + " "
@@ -824,14 +887,14 @@ function _internDrawMonth(m, y) {
     while (j < fstJ - 1) {
         if (j > 4) {
             num++;
-            if (doesThisDateHaveAnEvent(num, m, y)) {
+            if (doesThisDateHaveAnEvent(num)) {
                 content += '<td class="noWork noMonth monthDown hasEvent>' + num + '</td>';
             } else {
                 content += '<td class="noWork noMonth monthDown">' + num + '</td>';
             }
         } else {
             var num = lstMonthDMax - fstJ + j + 2;
-            if (doesThisDateHaveAnEvent(num, m, y)) {
+            if (doesThisDateHaveAnEvent(num)) {
                 content += '<td class = "noMonth monthDown hasEvent">' + num + '</td>';
             } else {
                 content += '<td class = "noMonth monthDown">' + num + '</td>';
@@ -855,10 +918,10 @@ function _internDrawMonth(m, y) {
                 } else {
                     bal = '<td class="month';
                 }
-                if (doesThisDateHaveAnEvent(i, m, y)) {
+                if (doesThisDateHaveAnEvent(i)) {
                     bal += ' hasEvent';
                 }
-                if (j >= 5) {
+                if ((j >= 5) || (holidays.indexOf(i) != -1)) {
                     bal += ' noWork"';
                 } else {
                     bal += '"';
@@ -879,13 +942,13 @@ function _internDrawMonth(m, y) {
                 k++;
                 var bal;
                 if (j > 4) {
-                    if (doesThisDateHaveAnEvent(k, m, y)) {
+                    if (doesThisDateHaveAnEvent(k)) {
                         bal = '<td class = "noWork noMonth monthUp hasEvent">';
                     } else {
                         bal = '<td class = "noWork noMonth monthUp">';
                     }
                 } else {
-                    if (doesThisDateHaveAnEvent(k, m, y)) {
+                    if (doesThisDateHaveAnEvent(k)) {
                         bal = '<td class = "noMonth monthUp hasEvent">';
                     } else {
                         bal = '<td class = "noMonth monthUp">';

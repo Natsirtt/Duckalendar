@@ -38,9 +38,9 @@ if (!isset($_COOKIE['connection'])) {
         $hasEventList = array();
         while($result = $reqres->fetch()) {
             $date = new DateTime($result['date']);
-            $day = $date->format("d");
-            if (array_search($day, $hasEventList) === FALSE) {
-                array_push($hasEventList, $day);
+            $easterDay = $date->format("d");
+            if (array_search($easterDay, $hasEventList) === FALSE) {
+                array_push($hasEventList, $easterDay);
             }
         }
         $res['array'] = $hasEventList;
