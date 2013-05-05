@@ -23,6 +23,9 @@ if (isset($_COOKIE['connection'])) {
                 $status = $inputConnection->preparedQuery($sql, $values);
                 if (!$status) {
                     $notification = "La modification à échoué";
+                } else {
+                    //Redirection vers l'index, la modification étant effectuée
+                    header("Location: index.php");
                 }
             }
         }

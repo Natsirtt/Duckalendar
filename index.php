@@ -105,9 +105,17 @@ require_once 'inc/header.inc.php';
                 for ($i = 0; $i < $len; $i++) {
                     $event = $incomingEventsArray[$i];
                     $beginDate = new DateTime($event['date']);
-                    echo "<dt>[" . $beginDate->format("d-m-Y") . "][" . $event['beginTime'] . "] " . $event['name'] . "</dt>";
-                    if ($event['desc'] != "") {
-                        echo "<dd>" . $event['desc'] . "</dd>";
+                    $endDate = new DateTime($event['endDate']);
+                    $endDateTimestamp = $endDate->format("U");
+                    $now = new DateTime();
+                    $nowTimestamp = $now->format("U");
+                    //Comparaison pour prendre en compte le temps
+                    if ($endDateTimestamp > $nowTimestamp) {
+                        //Alors on affiche
+                        echo "<dt>[" . $beginDate->format("d-m-Y") . "][" . $event['beginTime'] . "] " . $event['name'] . "</dt>";
+                        if ($event['desc'] != "") {
+                            echo "<dd>" . $event['desc'] . "</dd>";
+                        }
                     }
                 }
             }
@@ -157,16 +165,6 @@ require_once 'inc/header.inc.php';
 </div>
 
 <script src="calendar.js" type="text/javascript"></script>
-
-<?php
-//Rend le focus à l'input du password en cas d'erreur du mot de passe
-/* if (isset($_GET['login'])) { ?>
-  <script type="text/javascript">
-  $(document).ready(function() {
-  $("#passwordInput").get(0).focus();
-  });
-  <?php } */
-?>
 
 <?php include_once 'inc/footer.inc.php'; ?>
 

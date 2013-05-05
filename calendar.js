@@ -865,9 +865,9 @@ function drawMonth(m, y) {
 function _internDrawMonth(m, y) {
     var holidays = getHolidayArray(m, y);
     $("#month").html(
-            numericToStrMonth(m - 1)
+            '<span id="#calMonthChooser">' + numericToStrMonth(m - 1) + '</span>'
             + " "
-            + y
+            + '<span id="#calYearChooser">' + y + '</span>'
             + "<br />"
             );
     var i = 0;
@@ -962,6 +962,12 @@ function _internDrawMonth(m, y) {
         }
     }
     calBody.append(content);
+    
+    //Clic sur le mois et l'année du calendrier
+    $("#calMonthChooser").unbind('click');
+    $("#calYearChooser").unbind('click');
+    
+    //Clic sur une case
 
     $(".month").click(
             function() {
